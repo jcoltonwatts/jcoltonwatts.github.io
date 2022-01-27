@@ -5,4 +5,6 @@ title: CV
 permalink: /cv/
 ---
 
-# Coming Soon!#
+You can download a copy of my Curriculum Vitae [here]{% link /assets/files/Watts_CV_2022.pdf %}.
+
+If you would like a PDF copy of any of the works therein, I am happy to provide them upon request.
