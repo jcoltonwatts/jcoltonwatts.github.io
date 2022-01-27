@@ -4,6 +4,7 @@
 # title: Home
 layout: home
 list_title: News
+classes: wide
 ---
 
 ### Welcome to my page!
