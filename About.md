@@ -1,7 +1,7 @@
 ---
 layout: single
 type: page
-title: About
+# title: About
 permalink: /about/
 ---
 

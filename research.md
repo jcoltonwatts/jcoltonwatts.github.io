@@ -1,5 +1,6 @@
 ---
 title: Research
-layout: page
-permalink: /Research/
+type: page
+layout: single
+permalink: /research/
 ---
