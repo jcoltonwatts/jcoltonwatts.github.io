@@ -5,7 +5,7 @@ title: About
 permalink: /about/
 classes: wide
 header:
-  image: /assets/images/CuteJumper.JPG
+  image: /assets/images/family2.jpg
 ---
 
 ### Test
