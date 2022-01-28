@@ -15,7 +15,7 @@ classes: wide
 # author_profile: true
 sidebar:
   - image: /assets/images/IMG_8875.JPG
-      overlay_filter: "0"
+    overlay_filter: "0"
 ---
 
 Welcome to my page.
