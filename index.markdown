@@ -11,4 +11,4 @@ classes: wide
 
 I'm very new to jekyll, and markdown, and github... we'll see how this goes!
 
-![Family](/assets/images/family2.jpg)
+![Spider](/assets/images/RIMG0486.JPG)
