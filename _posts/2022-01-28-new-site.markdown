@@ -1,0 +1,8 @@
+---
+title:  "A Brand New Web Site!"
+date:   2022-01-28
+toc: false
+---
+Oh boy, here we go! This is my first attempt at creating and maintaining a site for my work as a biologist. I'm very new to the various tools I'm using to accomplish this, so please bear with me as I learn.
+
+I'm looking forward to using this space for posting updates on my research and life in general. Stay tuned!

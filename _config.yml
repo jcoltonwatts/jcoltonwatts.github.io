@@ -35,6 +35,10 @@ author:
   name     : "Colton Watts"
   avatar   : "/assets/images/mugg.jpg"
   bio      : "Evolutionary ecologist and animal behavior nerd"
+  links:
+    - label: "Email"
+      icon: "fas fa-fw fa-envelope-square"
+      url: "mailto:j.colton.watts@gmail.com"
   location : "College Station, TX, USA"
 
 defaults:
@@ -58,7 +62,7 @@ atom_feed:
   hide: true
 
 header_pages:
-  - about.markdown
+  - bio.md
   - research.md
   - cv.md
 
