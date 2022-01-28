@@ -12,7 +12,9 @@ header:
   overlay_image: /assets/images/RIMG0486.JPG
 # excerpt: "I'll add something witty here later."
 classes: wide
-author_profile: true
+# author_profile: true
+sidebar:
+  - image: /assets/images/mugg.jpg
 ---
 
 Welcome to my page.
