@@ -2,6 +2,8 @@
 layout: single
 type: page
 title: CV
+header:
+  image: /assets/images/RIMG0486.JPG
 permalink: /cv/
 ---
 
