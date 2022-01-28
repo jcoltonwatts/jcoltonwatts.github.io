@@ -14,7 +14,7 @@ header:
 classes: wide
 # author_profile: true
 sidebar:
-  - image: /assets/images/mugg.jpg
+  - image: /assets/images/IMG_8875.JPG
 ---
 
 Welcome to my page.
