@@ -14,6 +14,6 @@ header:
 classes: wide
 ---
 
-### Welcome to my page!
+Welcome to my page!
 
 I'm very new to jekyll, and markdown, and github... we'll see how this goes!
