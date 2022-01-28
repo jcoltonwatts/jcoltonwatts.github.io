@@ -1,13 +1,11 @@
 ---
 layout: single
 type: page
-title: About
-permalink: /about/
+title: Bio
+permalink: /bio/
 classes: wide
 header:
   image: /assets/images/CuteJumper.JPG
 ---
 
-# Test
-## Test
-### Test
+I'll update this soon with more info about myself!
