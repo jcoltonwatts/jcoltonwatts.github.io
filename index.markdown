@@ -12,7 +12,7 @@ header:
   overlay_image: /assets/images/RIMG0486.JPG
 # excerpt: "I'll add something witty here later."
 classes: wide
-author.profile: true
+author_profile: true
 ---
 
 Welcome to my page.
