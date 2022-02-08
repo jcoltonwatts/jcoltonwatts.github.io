@@ -11,9 +11,13 @@ header:
 <center>Behavioral Ecology</center>
 ---
 
-Coming Soon!
+
+<center>Coming Soon!</center>
+
 
 <center>Population-level Consequences of Behavior</center>
 ---
 
-Coming Soon!
+
+<center>Coming Soon!</center>
+
