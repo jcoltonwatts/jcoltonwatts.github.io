@@ -1,8 +1,8 @@
 ---
-layout: single
-author_profile: true
 type: page
 title: Bio
+layout: single
+author_profile: true
 permalink: /bio/
 classes: wide
 header:

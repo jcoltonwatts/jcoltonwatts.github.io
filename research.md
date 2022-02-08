@@ -1,7 +1,11 @@
 ---
-title: Research
 type: page
+title: Research
 layout: single
-classes: wide
 permalink: /research/
+classes: wide
+header:
+  image: /assets/images/RIMG0486.JPG
 ---
+
+Coming Soon
