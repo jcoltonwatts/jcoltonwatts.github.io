@@ -4,6 +4,30 @@
 
 @charset "utf-8";
 $link-color: #7aa16c;
+$primary-color: #7aa16c;
 
 @import "minimal-mistakes/skins/{{ site.minimal_mistakes_skin | default: 'default' }}"; // skin
 @import "minimal-mistakes"; // main partials
+// Code below keeps photos in sidebar from being highlighted-- had to change "opacity" from 0.75 to 1. Actually, ended up changing opacity and hover both to 0.9, so the photo would be lighter overall but still not change
+.sidebar {
+  @include clearfix();
+  @include breakpoint($large) {
+    float: left;
+    width: calc(#{$right-sidebar-width-narrow} - 1em);
+    opacity: 0.9;
+    -webkit-transition: opacity 0.2s ease-in-out;
+    transition: opacity 0.2s ease-in-out;
+
+    &:hover {
+      opacity: 0.9;
+    }
+
+    &.sticky {
+      overflow-y: auto;
+      /* calculate height of nav list
+         viewport height - nav height - masthead x-padding
+      */
+      max-height: calc(100vh - #{$nav-height} - 2em);
+    }
+  }
+};

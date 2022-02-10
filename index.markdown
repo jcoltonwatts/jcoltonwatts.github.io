@@ -3,7 +3,7 @@
 # To modify the layout, see https://jekyllrb.com/docs/themes/#overriding-theme-defaults
 # title: Home
 layout: home
-list_title: News
+list_title: Posts
 title: "Hello!"
 date: 2016-03-23T11:48:41-04:00
 header:
@@ -17,12 +17,13 @@ sidebar:
   - title: "J. Colton Watts"
     image: /assets/images/IMG_8875.JPG
     # overlay_filter: "0"
-    text: "Postdoctoral Research Associate,<br>
-    Fitzpatrick Lab at Texas A&M"
-  - links:
-      label: "Email"
-      icon: "fas fa-fw fa-envelope-square"
-      url: "mailto:j.colton.watts@gmail.com"
+    text: "Postdoctoral Researcher,<br>
+    Fitzpatrick Lab at Texas A&M<br>
+    [j.colton.watts@gmail.com](mailto:j.colton.watts@gmail.com)"
+#  - links:
+#      label: "Email"
+#      icon: "fas fa-fw fa-envelope-square"
+#      url: "mailto:j.colton.watts@gmail.com"
 feature_row:
   - image_path: assets/images/RIMG0487.JPG
     #alt: "placeholder image 1"
@@ -37,6 +38,7 @@ feature_row:
     url: "/research/"
     btn_label: "Read More"
     btn_class: "btn--primary"
+    button_color: "primary"
 ---
 
 Welcome to my page.
