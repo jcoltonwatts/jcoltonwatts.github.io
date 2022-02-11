@@ -6,7 +6,7 @@ author_profile: true
 permalink: /bio/
 classes: wide
 header:
-  overlay_image: /assets/images/CuteJumper_crop.JPG
+  overlay_image: /assets/images/CuteJumper_crop.jpg
   overlay_filter: 0.1
   overlay_excerpt: "About Me"
   show_overlay_excerpt: true
