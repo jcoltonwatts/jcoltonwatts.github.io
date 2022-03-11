@@ -43,7 +43,7 @@ feature_row:
 
 Welcome to my page.
 
-I'm an evolutionary ecologist interested in how animal behavior shapes the responses of populations to the environmental conditions they experience. My research combines empirical methods and mathematical modeling to better understand the ultimate causes of behaviors and their consequences for evolutionary and ecological dynamics.
+I'm an evolutionary ecologist interested in animal behavior and how it shapes the responses of populations to their environments. My research combines empirical methods and mathematical modeling to better understand the ultimate causes of behaviors and their consequences for evolutionary and ecological dynamics.
 
 I study a variety of specific topics, from mate choice and sexual signaling to daily rhythms and life history strategies. I'm especially interested in how selection on mate choice and sexual signals changes with the social environment, and how adaptation (or lack thereof) to the social environment affects trait evolution and population persistence. 
 
