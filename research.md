@@ -18,6 +18,9 @@ author_profile: true
 
 A main component of my research focuses on how interactions between organisms and their environment shape behavioral evolution. Behaviors provide an opportunity to generate and test fundamental ideas about trait evolution, but they also mediate many of the responses of individuals to their environments that shape other important ecological and evolutionary dynamics, such as population growth and persistence. As such, understanding the factors shaping behavioral evolution is important for both basic and applied science. I have studied a variety of specific topics through this lens, including foraging and antipredator behavior, mate sampling strategies and courtship behaviors, and reproductive timing. Currently, my research in this area centers on understanding how the social environment affects the evolution of female mate sampling behaviors and ornamentation.<br>
 <br>
+
+Below you can see an example of one eye-catching behavior I've studied-- the courtship dance of male <i>Schizocosa crassipes</i> wolf spiders! My colleagues and I demonstrated that females choose their mates based on differences in this behavior, but variation in this behavior among natural populations is actually unrelated to female mate choice. How weird! Video credit to Dan Schoenberg.
+
 <iframe align = "left" width="400" height="225" src="https://www.youtube.com/embed/YOYjiQCTm_c" title="Schizocsa crassipes courtship" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 <br><br>
 
