@@ -9,7 +9,7 @@ header:
   overlay_filter: 0.1
   show_overlay_excerpt: true
   tagline: "Research"
-author_profile: false
+author_profile: true
 ---
 <center>My research combines empirical and theoretical approaches understand the evolution of animal behavior, and how behavior in turn shapes ecological and evolutionary processes and patterns at higher levels of biological organization. Read on for more details!</center>
 
