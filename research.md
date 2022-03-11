@@ -21,11 +21,11 @@ A main component of my research focuses on how interactions between organisms an
 <iframe align = "left" width="400" height="225" src="https://www.youtube.com/embed/YOYjiQCTm_c" title="Schizocsa crassipes courtship" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 <br><br>
 
-<h3>Selected Publications</h3>:<br><br>
+<h3>Selected Publications:</h3><br>
 Watts JC, Tenhumberg B (2021) Optimal resource allocation and prolonged dormancy strategies in herbaceous plants. <i>Journal of Ecology 109</i>(1):218-233. [pdf]({% link /assets/files/Watts&Tenhumberg_2021.pdf %})
-<br>
+<br><br>
 Watts JC, Flynn AF, Tenhumberg B, Hebets EA (2019) Contemporary sexual selection does not explain variation in male display traits among populations. <i>Evolution 73</i>(9):1927-1940. [pdf]({% link /assets/files/Watts_etal_2019.pdf %})
-<br>
+<br><br>
 Watts JC, Jones TC, Herrig A, Miller M, Tehumberg B (2018). Temporal variation in predation risk may explain daily rhythms of foraging behavior in an orb-weaving spider. <i>The American Naturalist 191</i>(1):74-87. [pdf]({% link /assets/files/Watts_etal_2018.pdf %})
 <br><br>
 
