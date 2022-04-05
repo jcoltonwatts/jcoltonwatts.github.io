@@ -11,7 +11,7 @@ header:
   tagline: "Research"
 author_profile: true
 ---
-<center>My research combines empirical and theoretical approaches understand the evolution of animal behavior, and how behavior in turn shapes ecological and evolutionary processes and patterns at higher levels of biological organization. Read on for more details!</center>
+<center>My research combines empirical and theoretical approaches to understand the evolution of animal behavior, and how behavior in turn shapes ecological and evolutionary patterns at higher levels of biological organization. Read on for more details!</center>
 
 
 <center><h2>The Ecology and Evolution of Behavior</h2></center>
@@ -19,7 +19,7 @@ author_profile: true
 A main component of my research focuses on how interactions between organisms and their environment shape behavioral evolution. Behaviors provide an opportunity to generate and test fundamental ideas about trait evolution, but they also mediate many of the responses of individuals to their environments that shape other important ecological and evolutionary dynamics, such as population growth and persistence. As such, understanding the factors shaping behavioral evolution is important for both basic and applied science. I have studied a variety of specific topics through this lens, including foraging and antipredator behavior, mate sampling strategies and courtship behaviors, and reproductive timing. Currently, my research in this area centers on understanding how the social environment affects the evolution of female mate sampling behaviors and ornamentation.<br>
 <br>
 
-Below you can see an example of one eye-catching behavior I've studied-- the courtship dance of male <i>Schizocosa crassipes</i> wolf spiders! My colleagues and I demonstrated that females choose males based on differences in these courtship dances, but variation in dances among natural populations is actually unrelated to female choice. How weird! Video credit to Dan Schoenberg.
+Below you can see an example of one eye-catching behavior I've studied-- the courtship dance of male <i>Schizocosa crassipes</i> wolf spiders! My colleagues and I demonstrated that females choose males based on differences in these courtship dances, but variation in dances among natural populations appears to be unrelated to female choice. How weird! Video credit to Dan Schoenberg.
 
 <iframe align = "left" width="400" height="225" src="https://www.youtube.com/embed/YOYjiQCTm_c" title="Schizocsa crassipes courtship" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 <br>
