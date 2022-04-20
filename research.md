@@ -40,7 +40,7 @@ Watts JC, Ross CR, Jones TC (2014) Diel and life-history characteristics of pers
 I am also interested in understanding how individuals' behaviors "scale up" to affect ecological and evolutionary dynamics at higher levels of biological organization (i.e., populations and communities). In my PhD research, I was especially interested in how the evolution of mate choice behaviors influences evolutionary diversification. More recently, I have been studying how the evolution of mate choice behaviors affects the relationship between population density and the strength of sexual selection. This latter focus on responses to demographic factors directly linked to population growth, such as population density, also provides an opportunity to study how feedback between ecological dynamics and behavioral evolution affects population persistence during rapid environmental change. I am currently developing this line of research further.
 
 <h3>Selected Publications:</h3><br>
-Watts JC, Hebets EA, Tenhumberg B (In Revision) Mate sampling determines the density-dependence of sexual selection. <i>The American Naturalist </i> 
+Watts JC, Hebets EA, Tenhumberg B (In Press) Mate sampling determines the density-dependence of sexual selection. <i>The American Naturalist </i> 
 
 Watts JC, Flynn AF, Tenhumberg B, Hebets EA (2019) Contemporary sexual selection does not explain variation in male display traits among populations. <i>Evolution 73</i>(9):1927-1940. [pdf]({% link /assets/files/Watts_etal_2019.pdf %})
 
