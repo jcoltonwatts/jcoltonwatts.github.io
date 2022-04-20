@@ -3,7 +3,8 @@ layout: single
 type: page
 title: CV
 header:
-  image: /assets/images/RIMG0486.JPG
+  overlay_image: /assets/images/RIMG0486.JPG
+  overlay_filter: 0.1
 permalink: /cv/
 ---
 
