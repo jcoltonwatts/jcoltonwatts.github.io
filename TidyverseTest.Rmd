@@ -45,7 +45,7 @@ The package _dplyr_ within the _tidyverse_ family has a lot of helpful functions
 
 ### Commonly used functions
 
-  - select(): select columns matching some criteria
+  - select(): select columns
   - filter(): filter rows matching some criteria
   - mutate(): create new columns by applying functions to existing columns
   - group_by(): split data into groups based on one or more variables
@@ -57,7 +57,7 @@ left_join(), right_join(), inner_join(), full_join(): merge data tables in vario
 
 *Note*: one of the unique (and handy!) features of tidyverse is that all of these functions return a data frame (what _tidyverse_ calls a "tibble"). In base R, data frames are ```data.frame```s, and subsetting them can return objects that are _not_ still a data.frame. 
 
-### Test-driving _dplyr_ with a little help from some penguins
+### A little help from some penguins
 
 Let's try our hand at some "data wrangling" using some published data on Antarctic penguins. These data were collected by Kristen Gorman with the Palmer Station Long Term Ecological Research Program and later developed into an R package for educational uses by Allison Horst, and Alison Hill, and Kristen Gorman. The published manuscript focused on differences in sexual size dimorphism among 3 species of penguin and their relation to sex differences in foraging ecology. The full data set has really neat info on stable isotope blood measurements and reproductive success, but for the sake of brevity we will focus on the morphological measures used to quantify sexual size dimorphism.
 
@@ -88,7 +88,31 @@ Interesting! It tells us that our dataset is saved in R as a ```tibble```, not a
 > - You can change a ```tibble``` to a ```data.frame``` using the ```as.data.frame()``` function.
 > - You can create a ```tibble``` from scratch using the ```tibble()``` function [the syntax is largely similar to data.frame(), but with a few handy differences].
 
-Getting back to the data, we see that we have variables for species, island, 4 different morphological variables, sex, and the year of observation. 
+Getting back to the data, we see that we have variables for species, island, 4 different morphological variables, sex, and the year of observation. Let's explore some of the tools that _dplyr_ gives us for working with these data.
 
+### select() a column (or columns) of interest
 
+If we're interested in sexual dimorphism of penguins, we'll certainly need to visualize and analyze some of those morphological variables. But how do we perform operations on a single variable within this data set that has many variables? We can use the ```select()``` function to subset the data.
+
+Let's look at body mass first, since this seems to be the most direct measure of overall size.
+
+```{r echo = TRUE}
+select(penguins, body_mass_g) ## select(tibble, column)
+```
+Note that this is *still a tibble*, even though it's just one string of numbers. If we had instead isolated a single variable using the subsetting in base R, we would have gotten a ```vector```, not another ```tibble```. If obtaining the variable as a ```vector``` is the goal, we can accomplish that in _dplyr_ using the ```pull()``` function. The tidyness of the tidyverse comes from the fact that we have to be explicit about this-- in the tidyverse, R will not make assumptions about reformatting our data when we subset it.
+
+Compare below
+```{r echo = TRUE}
+penguins$"body_mass_g" ## subsetting by variable using base R's $ notation
+```
+
+Okay, but back to sexual dimorphism... what we really want to do is to look at body mass _by sex_. Can we get a ```tibble``` with both of those variables?
+
+```{r echo = TRUE}
+select(penguins, body_mass_g, sex) ## select(tibble, column)
+```
+
+Sure! We can add as many of the variables in the original ```tibble``` to the ```select()``` function's arguments to retain them in our selection.
+
+### filter() rows based on some criteria
 
