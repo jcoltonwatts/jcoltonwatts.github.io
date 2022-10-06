@@ -12,6 +12,13 @@ header:
   show_overlay_excerpt: true
 ---
 
-[Data Wrangling Using tidyverse in R](TidyverseTest.md)
+Under construction! Check back soon.
 
-[Getting started with ggplot2 in R](GettingStartedggplot2.md)
+
+{% comment %} 
+    [Data Wrangling Using tidyverse in R](TidyverseTest.md)
+{% endcomment %}
+
+{% comment %} 
+    [Getting started with ggplot2 in R](GettingStartedggplot2.md)
+{% endcomment %}
