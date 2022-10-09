@@ -46,6 +46,7 @@ The package _dplyr_ within the _tidyverse_ family has a lot of helpful functions
 ### Commonly used functions
 
   - select(): select columns
+  - pull(): select a column and turn to a vector
   - filter(): filter rows matching some criteria
   - mutate(): create new columns by applying functions to existing columns
   - group_by(): split data into groups based on one or more variables
@@ -54,8 +55,6 @@ The package _dplyr_ within the _tidyverse_ family has a lot of helpful functions
   - count(): count discrete values
   - 
 left_join(), right_join(), inner_join(), full_join(): merge data tables in various ways.
-
-*Note*: one of the unique (and handy!) features of tidyverse is that all of these functions return a data frame (what _tidyverse_ calls a "tibble"). In base R, data frames are ```data.frame```s, and subsetting them can return objects that are _not_ still a data.frame. 
 
 ### A little help from some penguins
 
@@ -73,46 +72,152 @@ And now let's load it.
 library(palmerpenguins) # load it in current R session
 ```
 
+The data we'll be using are now available in an object called ```penguins```. The full data are in ```penguins_raw```, which I encourage you to explore on your own later. 
 
-
-The data we'll be using are now available in a ```data.frame``` called ```penguins```. The full data are in ```penguins_raw```, which I  encourage you to check out later!
-
-Let's take a look at our data set. The most straightforward way to do this is with the ```print()``` function in base R.
+Let's take a look at our data set using the ```print()``` function in base R.
 
 ```{r echo = TRUE}
 print(penguins)
 ```
-Interesting! It tells us that our dataset is saved in R as a ```tibble```, not a ```data.frame```. *Tibbles are one of the main features of the tidyverse approach to data wrangling.* A ```tibble``` differs from the ```data.frame``` of base R in a few important ways. For one, a ```tibble``` won't drown your console in data when you use the View() function like we did above. But more importantly, a ```tibble``` makes fewer assumptions about what you mean when you build it or mess with it. For example, operations on a ```tibble``` always return a ```tibble``` unless you demand otherwise. In contrast, operations on a ```data.frame``` can return things that are not themselves another ```data.frame```. This is one of the main reasons the tidyverse is so tidy-- your data structure is preserved unless you explicitly ask otherwise. The ```penguins``` dataset comes as a ```tibble``` already because the developers are into the tidyverse phiolosophy.
+Interesting! It tells us that the penguins dataset is saved in R as a ```tibble```. *Tibbles are one of the main features of the tidyverse approach to data wrangling.* A ```tibble``` is like a ```data.frame``` from base R, but with a few important differences. For one, viewing and printing tibbles is generally tidier (get it?) than ```data.frame```s. Notice how viewing our tibble didn't drown the console with the entire dataset at once?? Instead we get a nice summary. It also tells us what type of information is stored in each column -- factors, integers, machine precision numbers ("dbl"), and so on. The authors of _palmerpenguins_ like the tidyverse approach to data, so the data come prepackaged as a tibble.
 
-> - You can change a ```data.frame``` to a ```tibble``` using the  ```as.tibble()``` function.
+A ```data.frame``` is not quite as friendly. However, you may sometimes need to turn a tibble to a data.frame to take advantage of functions in base R or other packages. Let's transform our penguin tibble into a data.frame and take a look at it.
+
+```{r echo = TRUE}
+penguins_df = as.data.frame(penguins) # creata a data.frame by applying the as.data.frame() function to the penguin tibble
+print(penguins_df)
+```
+So that's a little more like R just vomited data into your console with no description of its size or the types of variables in it. To see that, we would need the str() function in base R.
+
+```{r echo = TRUE}
+str(penguins_df)
+```
+
+Tibbles streamline this for us a bit.
+
+You can always get data into a tibble using ```as.tibble()```. Let's try that with the penguins_df we just created and double-check that it looks like our original data set again.
+
+```{r echo = TRUE}
+penguins_tibble = as.tibble(penguins_df)
+print(penguins_tibble)
+```
+Beautiful.
+
 > - You can change a ```tibble``` to a ```data.frame``` using the ```as.data.frame()``` function.
-> - You can create a ```tibble``` from scratch using the ```tibble()``` function [the syntax is largely similar to data.frame(), but with a few handy differences].
+> - You can change a ```data.frame``` to a ```tibble``` using the  ```as.tibble()``` function.
+> - You can create a ```tibble``` using the ```tibble()``` function [the syntax is largely similar to data.frame(), but with a few handy differences].
 
 Getting back to the data, we see that we have variables for species, island, 4 different morphological variables, sex, and the year of observation. Let's explore some of the tools that _dplyr_ gives us for working with these data.
 
 ### select() a column (or columns) of interest
 
-If we're interested in sexual dimorphism of penguins, we'll certainly need to visualize and analyze some of those morphological variables. But how do we perform operations on a single variable within this data set that has many variables? We can use the ```select()``` function to subset the data.
+If we're interested in sexual dimorphism of penguins, we'll certainly need to visualize and analyze some of those morphological variables. But how do we work with a single variable within this data set that has many variables? We can use the ```select()``` function to subset the data.
 
 Let's look at body mass first, since this seems to be the most direct measure of overall size.
 
 ```{r echo = TRUE}
 select(penguins, body_mass_g) ## select(tibble, column)
 ```
-Note that this is *still a tibble*, even though it's just one string of numbers. If we had instead isolated a single variable using the subsetting in base R, we would have gotten a ```vector```, not another ```tibble```. If obtaining the variable as a ```vector``` is the goal, we can accomplish that in _dplyr_ using the ```pull()``` function. The tidyness of the tidyverse comes from the fact that we have to be explicit about this-- in the tidyverse, R will not make assumptions about reformatting our data when we subset it.
+Note that this is *still a tibble*, even though one could just as easily think of it as one string of numbers (what R calls a ```vector```). Also, the data are still considered to be integer data. Using ```select()``` never changes the type of data. In the tidyverse, we have to be explicit about any changes we wish to make to the representation of our data. For example, if obtaining the variable as a ```vector``` really is the goal, we can accomplish that using the ```pull()``` function.
 
-Compare below
 ```{r echo = TRUE}
-penguins$"body_mass_g" ## subsetting by variable using base R's $ notation
+pull(penguins, body_mass_g)
 ```
 
-Okay, but back to sexual dimorphism... what we really want to do is to look at body mass _by sex_. Can we get a ```tibble``` with both of those variables?
+How does this differ from base R? Well, let's use our data.frame we created a moment ago to see. We can select a single column from a data.frame in base R using the ```$``` operator.
+```{r echo = TRUE}
+penguins_df$body_mass_g ## subsetting by variable using base R's $ notation
+```
+
+Right, so base R would have transformed our data into a vector without us asking it to do so. This may seem trivial, but in more complicated situations these unintended changes to data upon subsetting can create a lot of problems.
+
+*Back sexual dimorphism...* 
+
+What we'd really like to do is to look at morphological measures like body mass _by sex_. Can we get a ```tibble``` with both of those variables?
 
 ```{r echo = TRUE}
 select(penguins, body_mass_g, sex) ## select(tibble, column)
 ```
 
-Sure! We can add as many of the variables in the original ```tibble``` to the ```select()``` function's arguments to retain them in our selection.
+Sure! We can add as many of the variables in the original ```tibble``` to the ```select()``` function's arguments to retain them in our selection. There are lots of other interesting options for selecting and combining multiple variables that you can find in the help page for the select() function.
 
 ### filter() rows based on some criteria
 
+If we're interested in sexual dimorphism, we'll need to split our data up by sex at some point. We can do that with the ```filter()``` function, which will take only the rows of our data that meet some criterion. The criterion can be a lot of different things, but usually it's based on the value of one or more variables. For example, let's see if we can get the body mass measurements for only females (that is, rows of the data set for which the sex variable is equal to "female").
+
+To do this, we need to select() the body mass and sex variables and then filter() the data for only the females. There are a couple of ways to package these two steps together.
+
+1. intermediate steps -- select data, save it, filter it, save again.
+2. nesting steps -- nest the select() function inside the filter() function
+3. piping -- use the ```%>%``` operator to forward output from one operation to the next (tidyverse specific!)
+
+The first option is easy to follow, but can quickly clutter your R environment with a lot of similarly named intermediate objects. The second option simply nests functions to avoid creating intermediate objects -- this is very handy in moderation, but overzealous nesting brings many, many parentheses and much confusion. The last option is the tidyverse's solution to this conundrum. Using the "pipe" operator, we can simply push the output of one operation to the next in a "pipeline" that both removes intermediates and is easy to follow.
+
+```{r echo = TRUE}
+# Intermediate Steps #
+bodyMassDat =  select(penguins, body_mass_g, sex) # select body mass and sex and save as a new tibble
+filter(bodyMassDat, sex == "female") # filter bodyMassDat for only the rows for which sex is female
+
+# Nested Steps #
+filter(select(penguins, body_mass_g, sex), sex == "female") # use select() inside filter() to select variables before filter
+
+# Piping #
+select(penguins, body_mass_g, sex) %>% filter(sex == "female") # use select, "pipe" output forward to filter()
+```
+
+Here I used the ```==``` operator to specify the criterion that the variable ```sex``` must be equal to "female". There are lots of filter options available. We could filter rows for which a certain variable is less than or greater than a certain quantity using ```<``` and ```<=``` type operators, and we can find rows where a certain variable is missing using ```is.na()```. This can be especially helpful with the complement operator ```!```, for example to get the all the rows where a certian variable is _not_ missing (try ```filter(data, !is.na(variable))```).
+
+You can also filter by multiple criteria as well using logical operators like and (```&```) and or (```|```). Maybe we only want to look at data from females on Torgersen Island, for example. We'd need to ```select()``` the island variable from our data set as well, and then ```filter()``` for the rows where sex == female _and_ island == Torgersen.
+
+```{r echo}
+select(penguins, island, body_mass_g, sex) %>% # use select to get island, body mass, sex from the penguins data set, pipe output forward
+  filter(sex == "female" & island == "Torgersen") # then filter for rows where sex is female and island is Torgersen
+```
+
+Note that the "pipeline" starts to get too long for one line. Just make sure to place returns _after_ a ```%>%``` and R will recognize that you are still mid-pipeline and continue to the next line.
+
+You may have also noticed that when we used the intermediate steps or nested steps approaches, we had to specify the data used for the filter function. When we used a pipe, however, we only needed to specify the filtering criteria-- the data is assumed to be the output of the preceding step. This is another handy feature of the "piping" approach.
+
+### mutate() to create new variables
+
+Often, raw data do not have all of the information we would like to analyse. For example, I would be interested to know if female and male penguins differ not only in their overall size, but in their body condition. We might imagine a "penguin plumpness" index, where individuals that have large values have greater mass for their length. One (rather crude) way of calculating such a measure might be to divide each penguin's mass by its flipper length. Then, individuals with larger penguin plumpness indices (PPIs) will be those with more mass given (roughly) their overall size.
+
+```{r echo=TRUE}
+mutate(penguins, pengPlumpInd = body_mass_g / flipper_length_mm) # mutate(data, newVariableName = ...)
+```
+
+Great, so the output of the mutate function is the original data, but with a new variable calculated from existing variables using some function (here, just simple division). Very handy.
+
+If we want to make sure that we don't calculate PPIs for penguins whose sex was unknown (there are a few in the data!), we could filter before mutating...
+
+```{r echo=TRUE}
+filter(penguins, !is.na(sex)) %>% mutate(pengPlumpInd = body_mass_g / flipper_length_mm)
+```
+And we get a slightly smaller tibble where we've not calculated PPI values for individuals whose sex is unknown anyway. Nice!
+
+Note again that we can drop the data argument to ```mutate()``` because the pipe tells it to use the output from the ```filter()``` function that comes before.
+
+### Split-apply-combine approach
+
+Now that we know how to select and filter, we could get split our data up to get body masses and PPIs for females and males separately, apply various analyses to summarize the data for each group, and then combine that into a new tibble summarizing sexual size dimorphism. But then we'd probably want to look at each species separately, and it might be worth asking to what extent sexual size dimorphism varies among islands, or if there is variation among years... If all the required splitting and combining is starting to sound tedious, worry not! The tidyverse is here for you.
+
+There are two functions that streamline this "split-apply-combine" approach to data analysis: ```group_by()``` and ```summarize()```. 
+
+The ```group_by()``` function tells R that anything that happens "downstream" in our pipeline should be applied at the level of the group, where the group corresponds to values of some variable (e.g., sex or island). Note that this doesn't change how the data _looks_ (other than the tibble now mentions that it is grouped), but it drastically changes how it interacts with subsequent operations.
+
+```{r echo = TRUE}
+filter(penguins, !is.na(sex)) %>% group_by(sex) # filter for rows for which sex is *not* NA, and then group the result by sex.
+```
+
+The ```summarize()``` function creates a new dataframe with one row for each combination of the grouping variable(s) and one column for each summary statistic we specify. Let's try using that to get mean body mass by sex.
+
+```{r echo = TRUE}
+filter(penguins, !is.na(sex)) %>% group_by(sex) %>% summarize(meanBodyMassg = mean(body_mass_g))
+```
+Cool! So with one small line of code, we can get rid of NAs, group our data by sex, calculate summary statistics for each group, and make a nice tibble of the results. How delightful.
+
+But we need a measure of variance, right? How else could we know whether these differences in averages are large or small relative to the natural range of penguin mass? Back to the pipeline!
+
+```{r echo = TRUE}
+filter(penguins, !is.na(sex)) %>% group_by(sex) %>% summarize(meanBodyMassg = mean(body_mass_g), sdBodyMassg = sd(body_mass_g))
+```

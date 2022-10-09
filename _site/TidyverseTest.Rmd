@@ -226,8 +226,6 @@ And now let's load it.
 library(palmerpenguins) # load it in current R session
 ```
 
-
-
 The data we'll be using are now available in a ```data.frame``` called ```penguins```. The full data are in ```penguins_raw```, which I  encourage you to check out later!
 
 Let's take a look at our data set. The most straightforward way to do this is with the ```print()``` function in base R.
