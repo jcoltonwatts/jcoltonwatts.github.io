@@ -1,0 +1,24 @@
+---
+title: Introduction to ggplot2
+output: 
+  html_document:
+    toc: true
+    toc_depth: 3
+    toc_float: true
+---
+
+## Background
+
+While R provides ready-to-go tools for basic data visualization, it can quickly become cumbersome trying to customize these to more specific needs. The R package _ggplot2_ provides an alternative "grammar of graphics" that makes constructing high-quality, nuanced graphics a lot easier. At the same time, _ggplot2_ accomplishes this by adopting its own peculiar syntax and structure, so it takes a little getting used to. It's well worth it though, as I hope this module will show!
+
+## Objectives
+
+We really have one objective today: make a pretty plot! But we can break that down a bit:
+
+  1. Install and load ggplot2
+  2. Discuss basics of ggplot syntax
+  3. Build a plot
+  4. Save the graphic to a file
+  
+## Install and load ggplot2
+
