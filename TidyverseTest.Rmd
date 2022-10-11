@@ -8,7 +8,7 @@ output:
   
 ---
 
-## Background ##
+## Background
 
 A lot of your time working in R will likely be spent organizing, cleaning, and subsetting data to prepare it for plotting and statistical analysis. The [tidyverse](https://www.tidyverse.org/) is a set of R packages that make this easier by establishing a shared set of standards for how to represent and work with data sets. It includes commonly used packages for managing data like [dplyr](https://dplyr.tidyverse.org/) and [tidyr](https://tidyr.tidyverse.org/), and the [ggplot2](https://ggplot2.tidyverse.org/) graphics package. This module focuses on data management with dplyr and tidyr. For more an introduction to ggplot2, check out [this module](GettingStartedggplot2.md).
 
@@ -17,11 +17,12 @@ A lot of your time working in R will likely be spent organizing, cleaning, and s
 The goal of this module is to introduce R users to the philosophy of tidyverse and illustrate how its features can make data management and analysis easier. More specifically, this module guides users through
 
 1. Installing tidyverse
-2. Subsetting data
-3. Chaining operations using pipes (%>%)
+2. Subsetting data and chaining operations using pipes (%>%)
 4. Calculating new variables from existing ones
 5. Summarizing data using split-apply-combine approach
-6. Moving between long- and wide-format data
+6. Applying statistical analyses "in the pipeline"
+7. Plotting "in the pipeline"
+8. Moving between long- and wide-format data
 
 ## Installing Tidyverse
 
@@ -95,16 +96,16 @@ str(penguins_df)
 
 Tibbles streamline this for us a bit.
 
-You can always get data into a tibble using ```as.tibble()```. Let's try that with the penguins_df we just created and double-check that it looks like our original data set again.
+You can always get data into a tibble using ```as_tibble()```. Let's try that with the penguins_df we just created and double-check that it looks like our original data set again.
 
 ```{r echo = TRUE}
-penguins_tibble = as.tibble(penguins_df)
+penguins_tibble = as_tibble(penguins_df)
 print(penguins_tibble)
 ```
 Beautiful.
 
 > - You can change a ```tibble``` to a ```data.frame``` using the ```as.data.frame()``` function.
-> - You can change a ```data.frame``` to a ```tibble``` using the  ```as.tibble()``` function.
+> - You can change a ```data.frame``` to a ```tibble``` using the  ```as_tibble()``` function.
 > - You can create a ```tibble``` using the ```tibble()``` function [the syntax is largely similar to data.frame(), but with a few handy differences].
 
 Getting back to the data, we see that we have variables for species, island, 4 different morphological variables, sex, and the year of observation. Let's explore some of the tools that _dplyr_ gives us for working with these data.
@@ -131,27 +132,27 @@ penguins_df$body_mass_g ## subsetting by variable using base R's $ notation
 
 Right, so base R would have transformed our data into a vector without us asking it to do so. This may seem trivial, but in more complicated situations these unintended changes to data upon subsetting can create a lot of problems.
 
-*Back sexual dimorphism...* 
+*Back to sexual dimorphism...* 
 
-What we'd really like to do is to look at morphological measures like body mass _by sex_. Can we get a ```tibble``` with both of those variables?
+What we'd really like to do is to look at morphological measures like body mass _grouped by sex_. Can we get a ```tibble``` with both of those variables?
 
 ```{r echo = TRUE}
 select(penguins, body_mass_g, sex) ## select(tibble, column)
 ```
 
-Sure! We can add as many of the variables in the original ```tibble``` to the ```select()``` function's arguments to retain them in our selection. There are lots of other interesting options for selecting and combining multiple variables that you can find in the help page for the select() function.
+Sure! Just add more of the variables in the original ```tibble``` to the ```select()``` function's arguments to retain them in the selection. There are lots of other interesting options for selecting and combining multiple variables that you can find in the help page for the select() function.
 
 ### filter() rows based on some criteria
 
-If we're interested in sexual dimorphism, we'll need to split our data up by sex at some point. We can do that with the ```filter()``` function, which will take only the rows of our data that meet some criterion. The criterion can be a lot of different things, but usually it's based on the value of one or more variables. For example, let's see if we can get the body mass measurements for only females (that is, rows of the data set for which the sex variable is equal to "female").
+If we're interested in sexual dimorphism, we'll undoubtedly want to be able to look at the data for each sex separately at some point. We can do that with the ```filter()``` function, which will take only the rows of our data that meet some criterion. The criterion can be a lot of different things, but usually it's based on the value of one or more of the variables in the data set. For example, let's see if we can get the body mass measurements for only females (that is, rows of the data set for which the sex variable is equal to "female").
 
 To do this, we need to select() the body mass and sex variables and then filter() the data for only the females. There are a couple of ways to package these two steps together.
 
 1. intermediate steps -- select data, save it, filter it, save again.
-2. nesting steps -- nest the select() function inside the filter() function
+2. nesting steps -- use select() as the data input argument inside the filter() function
 3. piping -- use the ```%>%``` operator to forward output from one operation to the next (tidyverse specific!)
 
-The first option is easy to follow, but can quickly clutter your R environment with a lot of similarly named intermediate objects. The second option simply nests functions to avoid creating intermediate objects -- this is very handy in moderation, but overzealous nesting brings many, many parentheses and much confusion. The last option is the tidyverse's solution to this conundrum. Using the "pipe" operator, we can simply push the output of one operation to the next in a "pipeline" that both removes intermediates and is easy to follow.
+The first option is easy to follow, but can quickly clutter your R environment with a lot of similarly named intermediate objects. The second option simply nests functions to avoid creating intermediate objects -- this is very handy in moderation, but overzealous nesting brings many, many parentheses and much confusion. The last option is the tidyverse's solution to this tradeoff. Using the "pipe" operator ``` %>% ```, we can simply push the output of one operation to the next in a "pipeline" that both removes intermediates and is easy to follow.
 
 ```{r echo = TRUE}
 # Intermediate Steps #
@@ -180,44 +181,311 @@ You may have also noticed that when we used the intermediate steps or nested ste
 
 ### mutate() to create new variables
 
-Often, raw data do not have all of the information we would like to analyse. For example, I would be interested to know if female and male penguins differ not only in their overall size, but in their body condition. We might imagine a "penguin plumpness" index, where individuals that have large values have greater mass for their length. One (rather crude) way of calculating such a measure might be to divide each penguin's mass by its flipper length. Then, individuals with larger penguin plumpness indices (PPIs) will be those with more mass given (roughly) their overall size.
+Often, raw data do not have all of the information we would like to analyse. For example, I would be interested to know if female and male penguins differ not only in their size or mass, but in their body condition. We might imagine a "penguin plumpness" index, where individuals that have large values have greater mass for their length. One (rather crude) way of calculating such a measure might be to divide each penguin's mass by its flipper length. Then, individuals with larger penguin plumpness indices (PPIs) will be those with more mass given (roughly) their size.
 
 ```{r echo=TRUE}
 mutate(penguins, pengPlumpInd = body_mass_g / flipper_length_mm) # mutate(data, newVariableName = ...)
 ```
 
-Great, so the output of the mutate function is the original data, but with a new variable calculated from existing variables using some function (here, just simple division). Very handy.
+Great, so the output of the mutate function is the original data, but with a new variable calculated from existing variables using some function (here, just simple division). Very handy. You can apply all manner of functions using ```mutate()```, including ones you have written yourself.
 
 If we want to make sure that we don't calculate PPIs for penguins whose sex was unknown (there are a few in the data!), we could filter before mutating...
 
 ```{r echo=TRUE}
 filter(penguins, !is.na(sex)) %>% mutate(pengPlumpInd = body_mass_g / flipper_length_mm)
 ```
-And we get a slightly smaller tibble where we've not calculated PPI values for individuals whose sex is unknown anyway. Nice!
+And we get a slightly smaller tibble where we've not calculated PPI values for individuals whose sex is unknown anyway. Nice! This is the power of piping.
 
 Note again that we can drop the data argument to ```mutate()``` because the pipe tells it to use the output from the ```filter()``` function that comes before.
 
-### Split-apply-combine approach
+## Split-apply-combine approach to data analysis
 
-Now that we know how to select and filter, we could get split our data up to get body masses and PPIs for females and males separately, apply various analyses to summarize the data for each group, and then combine that into a new tibble summarizing sexual size dimorphism. But then we'd probably want to look at each species separately, and it might be worth asking to what extent sexual size dimorphism varies among islands, or if there is variation among years... If all the required splitting and combining is starting to sound tedious, worry not! The tidyverse is here for you.
+Now that we know how to select and filter, we could get split our data up to get body masses and PPIs for females and males separately, apply various analyses to summarize the data for each group, and then combine that into a new tibble summarizing sexual size dimorphism. But then we'd probably want to look at each species separately, and it might be worth asking to what extent sexual size dimorphism varies among islands, or if there is variation among years, and whether these patterns are the same in the remaining morphological measures... whew! If all the required splitting and combining is starting to sound tedious, worry not! The tidyverse is here for you.
 
 There are two functions that streamline this "split-apply-combine" approach to data analysis: ```group_by()``` and ```summarize()```. 
 
-The ```group_by()``` function tells R that anything that happens "downstream" in our pipeline should be applied at the level of the group, where the group corresponds to values of some variable (e.g., sex or island). Note that this doesn't change how the data _looks_ (other than the tibble now mentions that it is grouped), but it drastically changes how it interacts with subsequent operations.
+### group_by()
+
+The ```group_by()``` function tells R that any tidyverse functions that happen "downstream" in our pipeline should be applied at the level of the group, where the group corresponds to values of some variable (e.g., sex or island).
 
 ```{r echo = TRUE}
 filter(penguins, !is.na(sex)) %>% group_by(sex) # filter for rows for which sex is *not* NA, and then group the result by sex.
 ```
 
-The ```summarize()``` function creates a new dataframe with one row for each combination of the grouping variable(s) and one column for each summary statistic we specify. Let's try using that to get mean body mass by sex.
+Note that this doesn't change how the data _looks_ (other than the tibble now mentions that it is grouped), but it drastically changes how it interacts with subsequent operations. We can group by multiple variables, and even expressions based on variables. For example, let's create 6 groups, one for each sex on each island...
 
 ```{r echo = TRUE}
+filter(penguins, !is.na(sex)) %>% group_by(sex, island) # filter for rows for which sex is *not* NA, and then group the result by sex and island.
+```
+Minor changes to this pipeline would now allow us to quickly break our data down by species, sex, island, etc. With these groups in hand, we'd like to calculate some summary statistics at the level of the groups. This is where the ```summarize()``` function comes in handy.
+
+### summarize()
+ 
+The ```summarize()``` function creates a new data set with one row for each combination of the grouping variable(s) and one column for each summary statistic we specify. Let's try using that to get a data set summarizing the mean body mass for each sex.
+
+We'll filter out the NAs again, group our data by sex, and then create a summary data frame with one row for each sex and one column called "meanBodyMassg" containing the average body mass measurement for individuals in that group (sex).
+
+```{r echo = TRUE}
+# filter penguins to remove rows for which sex is unknown, then group the data by sex, and then calculate mean body mass for each group.
 filter(penguins, !is.na(sex)) %>% group_by(sex) %>% summarize(meanBodyMassg = mean(body_mass_g))
 ```
-Cool! So with one small line of code, we can get rid of NAs, group our data by sex, calculate summary statistics for each group, and make a nice tibble of the results. How delightful.
+Cool! So with one small line of code, we can get rid of NAs, group our data by sex, calculate summary statistics for each group, and make a nice tibble of the results. How delightful. Also, I know now that male penguins are, on average, much more massive than females. This is very different than the spiders I am used to studying!
 
-But we need a measure of variance, right? How else could we know whether these differences in averages are large or small relative to the natural range of penguin mass? Back to the pipeline!
+Sex differences in mean body mass are central to our question of sexual size dimorphism, but we'd like to know whether this difference is small or large relative to the natural range of penguin mass. Let's add  a measure of variance to our summary. Simply head back to the pipeline and add the standard deviation in body mass to the ```summarize()``` function's arguments.
 
 ```{r echo = TRUE}
 filter(penguins, !is.na(sex)) %>% group_by(sex) %>% summarize(meanBodyMassg = mean(body_mass_g), sdBodyMassg = sd(body_mass_g))
 ```
+So while there's a roughly 700 g difference in the mean mass of females and males, the average penguin differs from their sex-specific average by about that much (666 g for females, 788 g for males.). So while females and males are, on average, pretty different in mass, there's a lot of overlap. I probably wouldn't want to go out and start weighing penguins to determine their sex. That's helpful to know.
+
+We can add as many summary measures as we would like. Let's go ahead and add the mean and standard deviation for PPI as well.
+
+*NOTE*: we have to add our PPI calculation back into our pipeline to accomplish this. This is because our pipelines don't alter the original data set. They simply call on the data set, perform some operation, and then pass the output down the pipeline. Of course, we could save the output data as an object (e.g., a new tibble) at any time. However, the fact that we can accomplish a lot without necessarily needing to do this is part of what makes piping so nice.
+
+```{r echo = TRUE}
+# filter() to remove rows where sex is NA,
+filter(penguins, !is.na(sex)) %>% 
+  # mutate() to calculate penguin plumpness index from body mass and flipper length
+  mutate(pengPlumpInd = body_mass_g / flipper_length_mm) %>% 
+  # group data by sex
+  group_by(sex) %>%
+  # summarize groups in terms of mean body manss, sd in body mass, mean PPI, and sd in PPI
+  summarize(meanBodyMassg = mean(body_mass_g),
+            sdBodyMassg = sd(body_mass_g),
+            meanPPI = mean(pengPlumpInd),
+            sdPPI = sd(pengPlumpInd))
+```
+
+We can even calculate summary measures based on other summary measures in the same line of code, provided we make sure that we ask R to calculate them in order. For example, we might want to know the coefficient of variation (CV) in body mass for each sex (i.e., the standard deviation in body size divided by the mean body size). As long as we ask to calculate this _after_ we calculate the mean and standard deviation, ```summarize()``` can handle this for us. In this way, we can sort of sneak a "mutate" step into our summarizing.
+
+```{r echo = TRUE}
+# filter() to remove rows where sex is NA,
+filter(penguins, !is.na(sex)) %>% 
+  # mutate() to calculate penguin plumpness index from body mass and flipper length
+  mutate(pengPlumpInd = body_mass_g / flipper_length_mm) %>% 
+  # group data by sex
+  group_by(sex) %>%
+  # summarize groups in terms of mean body manss, sd in body mass, mean PPI, and sd in PPI
+  summarize(meanBodyMassg = mean(body_mass_g),
+            sdBodyMassg = sd(body_mass_g),
+            CVBodyMassg = sdBodyMassg / meanBodyMassg,
+            meanPPI = mean(pengPlumpInd),
+            sdPPI = sd(pengPlumpInd))
+```
+
+Now we can see that while males are more variable in body mass than females (i.e., their ```sdBodyMassg``` is larger), the variation is really pretty similar once we consider that males are just larger overall (i.e., their ```CVBodyMassg``` is almost identical).
+
+Let's take this all the way to its limit with these data! We have 3 species, 3 islands, and two sexes we'd like to compare for each. This seems like a logical way to organize the data and summarize them. Let's also get the sample size for each of these sub-groups -- we can do this including the ```n()``` function as one of our summary measures.
+
+
+```{r echo = TRUE}
+# filter() to remove rows where sex is NA,
+filter(penguins, !is.na(sex)) %>% 
+  # mutate() to calculate penguin plumpness index from body mass and flipper length
+  mutate(pengPlumpInd = body_mass_g / flipper_length_mm) %>% 
+  # group data by sex
+  group_by(species, island, sex) %>%
+  # summarize groups in terms of mean body manss, sd in body mass, mean PPI, and sd in PPI
+  summarize(meanBodyMassg = mean(body_mass_g),
+            sdBodyMassg = sd(body_mass_g),
+            CVBodyMassg = sdBodyMassg / meanBodyMassg,
+            meanPPI = mean(pengPlumpInd),
+            sdPPI = sd(pengPlumpInd),
+            sampleSize = n())
+```
+
+In some cases it might be useful to sort this summary by some variable of interest. For example, if we were interested in identifying the combination of species-island-sex with the biggest penguins, we could use the ```arrange``` function to sort the output in order of descending body mass.
+
+```{r echo = TRUE}
+# filter() to remove rows where sex is NA,
+filter(penguins, !is.na(sex)) %>% 
+  # mutate() to calculate penguin plumpness index from body mass and flipper length
+  mutate(pengPlumpInd = body_mass_g / flipper_length_mm) %>% 
+  # group data by sex
+  group_by(species, island, sex) %>%
+  # summarize groups in terms of mean body manss, sd in body mass, mean PPI, and sd in PPI
+  summarize(meanBodyMassg = mean(body_mass_g),
+            sdBodyMassg = sd(body_mass_g),
+            CVBodyMassg = sdBodyMassg / meanBodyMassg,
+            meanPPI = mean(pengPlumpInd),
+            sdPPI = sd(pengPlumpInd),
+            sampleSize = n()) %>% 
+  # sort by descending body mass to get largest at top -- careful that we sort on the new summary variables, not theoriginal variables!
+  arrange(desc(meanBodyMassg))
+```
+
+A someone with absolutely no penguin-related knowledge, this is pretty neat to see! I didn't know that Gentoo penguins are generally more massive and plumper for their body size than Adelie and Chinstrap penguins. And I certainly would've never guessed that Adelie penguins can be bigger _or_ smaller than Chinstrap penguins, depending on whether the Adelie in question is male (bigger) or female (smaller). It's also interesting to me that for Adelie penguins, the one species that occurs across all 3 islands, the island with the biggest females (Torgersen) is _not_ the same island with the biggest males (Biscoe). That said, the differences in mean body masses and plumpnesses are very small relative to the their standard deviations, so penguins are virtually identical in mass across the islands.
+
+Also, it's interesting to note that the most massive penguins also tend to be more massive for their size (our "PPI"). This probably makes sense given that a small change in a penguin's length produces a larger change in its volume. 
+
+## Statistical analysis "in the pipeline"
+
+If you're like me, you're probably itching for a statistical test of whether these differences in size are greater than one would expect by chance. While I won't get into the details here of how to choose and implement statistical analyses, it's helpful to know the general approach for working one into your data analysis pipeline.
+
+As an example, let's see if we can ```filter()``` the data to exclude the rows for which sex is unknown, ```mutate``` the data to calculate PPI, and then use ```lm()``` from base R to fit a linear model predicting PPI as a function of species and sex (we'll ignore different islands for now, for simplicity). After fitting the model, we need to test the significance of the estimated effects. We'll use an Analyis of Variance (ANOVA) for this, which is available using the ```anova()``` function in base R. That's right, we can use base R functions within our pipelines too! If you're keeping count, doing this without pipes would involve either (1) creating 3 intermediate objects or (2) 3 instances of nesting a function inside another function. Pipes are nice for cases like this.
+
+```{r echo = TRUE}
+# filter() to remove rows where sex is NA,
+filter(penguins, !is.na(sex)) %>% 
+  # mutate() to calculate penguin plumpness index from body mass and flipper length
+  mutate(pengPlumpInd = body_mass_g / flipper_length_mm) %>% 
+  # fit a linear model where pengPlumpInd is the response variable, and sex, species, and their interaction is the predictor
+  lm(formula = pengPlumpInd ~ species + sex + species:sex) %>% 
+  # ask r to analyse that linear model using an ANalysis Of VAriance (ANOVA) using the anova() function in base R.
+  anova()
+```
+
+The output kindly reminds us what our response variable was (pengPlumpInd) and provides us with a table containing rows for each predictor variable or interaction term and columns for the various parameters calculated during the ANOVA on the linear model. These are all important in their own right, but you'll most often find yourself reporting the the degrees of freedom (_df_), the test stastic (an _F_-value, in this case), and the _p_-value (Pr(>F)).
+
+It seems like there are, on average, significant species and sex differences in PPI (note that the _p_-values associated with these terms fall below the conventional cut-off of 0.05). However, there is also a significant interaction between species and sex. This tells us that the difference between species depends on which sex you consider, and vice versa. This is what we inferred from the summary table we made, but it's good to know that a preliminary statistical analysis supports this intuition.
+
+## Plotting "in the pipeline"
+
+Finally, we can also run pipelines into plots. There are really neat tools for doing this that are part of the tidyverse, largely within the _ggplot2_ package. Although I won't get deep into ggplot here, it's useful to see the general approach to implementing plotting in a pipeline.
+
+Let's make sure ggplot2 is installed.
+
+```{r eval = FALSE, echo = TRUE}
+install.packages("ggplot2") # install the package
+```
+
+And now we need to load it.
+
+``` {r, eval = TRUE, echo = TRUE}
+library(ggplot2) # load it in the current R session.
+```
+
+Let's try to visualize the result from our ANOVA on the PPI of different species and sexes of penguins above. Ideally, we'd like to have a plot that has our response variable on the y-axis and the predictor on the x-axis. Our response variable is PPI, but we have two predictors, sex and species. Since we set out to look at sexual dimorphism, we probably want the male and female PPIs of a given species right next to each other to emphasize sex differences, and then replicate that visual comparison across the three species. We can do with a grouped boxplot, where we plot PPI for each species, but group the data in each species into that for males and that for females.
+
+```{r echo = TRUE}
+  # filter() to remove rows where sex is NA,
+  filter(penguins, !is.na(sex)) %>% 
+  # mutate() to calculate penguin plumpness index from body mass and flipper length
+  mutate(pengPlumpInd = body_mass_g / flipper_length_mm) %>% 
+  # use ggplot() to plot PPI for each species, grouped by sex.
+  # the first term (ggplot()) just sets up the plot object by saying what the x, y, and grouping variables will be.
+  # the second term (geom_boxplot()) specifies a "layer" of the plot's appearance-- in this case, a boxplot.
+  # Note that we don't have to specify our data set for either argument because it is inherited from the pipe.
+  # Also note that we don't have to re-specify our x, y, and grouping variable in geom_boxplot because it inherits
+  # these from the first ggplot term (unless we tell it otherwise).
+  ggplot(aes(x = species, y = pengPlumpInd, by = sex)) + # use plus signs to add on additional ggplot "layers"
+  geom_boxplot()
+```
+
+We can add an ```aes(color = sex)``` argument to the boxplot function to get the sexes in different colors...
+
+```{r echo = TRUE}
+  # filter() to remove rows where sex is NA,
+  filter(penguins, !is.na(sex)) %>% 
+  # mutate() to calculate penguin plumpness index from body mass and flipper length
+  mutate(pengPlumpInd = body_mass_g / flipper_length_mm) %>% 
+  # use ggplot() to plot PPI for each species, grouped by sex.
+  # This time, specify that boxplots should differ in color depending on sex.
+  ggplot(aes(x = species, y = pengPlumpInd, by = sex)) + 
+  geom_boxplot(aes(color = sex))
+```
+
+Note that if we specify how colors are to be applied by groups in ```geom_boxplot()```, we can omit the "by" argument from the first term because applying the color by sex groups the data by sex anyway.
+
+While we're at it, let's add nice axis labels using ```xlab()``` and ```ylab()```.
+
+```{r echo = TRUE}
+  # filter() to remove rows where sex is NA,
+  filter(penguins, !is.na(sex)) %>% 
+  # mutate() to calculate penguin plumpness index from body mass and flipper length
+  mutate(pengPlumpInd = body_mass_g / flipper_length_mm) %>% 
+  # use ggplot() to plot PPI for each species, grouped by sex.
+  # Can omit the "by" argument in ggplot() because we apply colors by the same grouping structure in geom_boxplot.
+  ggplot(aes(x = species, y = pengPlumpInd)) + 
+  geom_boxplot(aes(color = sex)) + 
+  xlab("Species") +
+  ylab("Penguin Plumpness Index (PPI)")
+```
+
+The tools available through _ggplot2_ are pretty staggering and certainly exceed the scope of what I can cover here. The takeaway here is that these tools are developed to work with piping and the tidyverse approach in general.
+
+## Moving between long- and wide-format data
+
+It's occasionally necessary to change the format of the data to work with a particular function or workflow in R. Most of the time, R functions will use data that are in "long format". Long format data are data where each variable observed appears in only one column, and there is therefore only one value for a given variable in any row. Let's look at our summary table of the ```penguins``` data as an example.
+
+```{r echo = TRUE}
+# filter() to remove rows where sex is NA,
+filter(penguins, !is.na(sex)) %>% 
+  # mutate() to calculate penguin plumpness index from body mass and flipper length
+  mutate(pengPlumpInd = body_mass_g / flipper_length_mm) %>% 
+  # group data by sex
+  group_by(species, island, sex) %>%
+  # summarize groups in terms of mean body mass, sd in body mass, mean PPI, and sd in PPI
+  summarize(meanBodyMassg = mean(body_mass_g),
+            sdBodyMassg = sd(body_mass_g),
+            CVBodyMassg = sdBodyMassg / meanBodyMassg,
+            meanPPI = mean(pengPlumpInd),
+            sdPPI = sd(pengPlumpInd),
+            sampleSize = n())
+```
+We can see that each variable appears in only one column, and was therefore measured only once per row. For example, there is only one column containing measures for mean body mass, so there is only one such measurement for each row. Thus, this is long-format data. Adding more observations to the data set (e.g., more species, islands, sexes, or combinations thereof) means adding more rows (lengthening the data), each with a single set of values for each variable.
+
+### pivot_wider
+
+To see how this differs from wide-format data, let's change it to wide format using ```pivot_wider()```. This function requires the following arguments:
+
+  - data: the data set you're transforming. Can be forwarded by the %>%
+  - names_from: The column that you want to expand into different columns. Each of these new columns will take its name from one of the unique values in the original column
+  - values_from: The column containing the values that you want to see for each "name" from the original column used for names_from.
+  
+Let's try taking names from the variable `island` and values from the variable `meanBodyMassg`.
+
+```{r echo = T}
+# filter() to remove rows where sex is NA,
+filter(penguins, !is.na(sex)) %>% 
+  # mutate() to calculate penguin plumpness index from body mass and flipper length
+  mutate(pengPlumpInd = body_mass_g / flipper_length_mm) %>% 
+  # group data by sex
+  group_by(species, island, sex) %>%
+  # summarize groups in terms of mean body manss, sd in body mass, mean PPI, and sd in PPI
+  summarize(meanBodyMassg = mean(body_mass_g),
+            sdBodyMassg = sd(body_mass_g),
+            CVBodyMassg = sdBodyMassg / meanBodyMassg,
+            meanPPI = mean(pengPlumpInd),
+            sdPPI = sd(pengPlumpInd),
+            sampleSize = n()) %>% 
+  # be sure to select *only* the variables you need in your wider table, else things will get messy. 
+  select(island, sex, meanBodyMassg) %>% 
+  # use pivot_wider() to turn values of island into their own columns, with the corresponding value of mean body mass contained in each.
+  pivot_wider(names_from = island, values_from = meanBodyMassg)
+```
+
+Now we can see that "island" is no longer a variable that exists in a single column. Instead, every value of "island" is given its own column, and for each combination of species and sex (row) we simply put the mean body mass for that particular island (if any) in the appropriate column. Each row therefore corresponds to a single combination of species and sex but contains multiple observations of mean body mass (one for each island). Adding more islands to this data set would mean adding columns, or "widening" the data.
+
+### pivot_longer()
+
+More often, you will find data in wide format and need to transform it to long format for compatibility with R's functions. Let's see if we can get our data back the way we had it! This requires the following arguments to the ```pivot_longer()``` function:
+
+  - cols: The columns that we want to collapse into a single column. Here, we want all the columns with island names, as these contain the repeated measures of body mass for each combination of species and sex (row). One way to do this is by putting all the column names together with ```c()```. Another way would be to exclude all the other columns using ```-c(species, sex)```.
+  - names_to: The name of a new column that will contain names of the columns that you collapsed. We'll call it "island".
+  - values_to: The name of a new column that will have the values for combination of species, sex, and now island. For our use, this is "meanBodyMassg".
+  
+```{r echo = T}
+# filter() to remove rows where sex is NA,
+filter(penguins, !is.na(sex)) %>% 
+  # mutate() to calculate penguin plumpness index from body mass and flipper length
+  mutate(pengPlumpInd = body_mass_g / flipper_length_mm) %>% 
+  # group data by sex
+  group_by(species, island, sex) %>%
+  # summarize groups in terms of mean body manss, sd in body mass, mean PPI, and sd in PPI
+  summarize(meanBodyMassg = mean(body_mass_g),
+            sdBodyMassg = sd(body_mass_g),
+            CVBodyMassg = sdBodyMassg / meanBodyMassg,
+            meanPPI = mean(pengPlumpInd),
+            sdPPI = sd(pengPlumpInd),
+            sampleSize = n()) %>% 
+  # be sure to select *only* the variables you need in your wider table, else things will get messy. 
+  select(island, sex, meanBodyMassg) %>% 
+  # use pivot_wider() to turn values of island into their own columns, with the corresponding value of mean body mass contained in each.
+  pivot_wider(names_from = island, values_from = meanBodyMassg) %>% 
+  # use pivot_longer() to collapse values for different islands into a single column and create a new column with the body mass measure for 
+  # each island.
+  pivot_longer(cols = c(Biscoe, Dream, Torgersen), names_to = "island", values_to = "meanBodyMassg")
+```
+
+Great, now we are back to one column for each variable, and one row for each observation. This is obviously a really silly pipeline at this point, but it illustrates the point.
