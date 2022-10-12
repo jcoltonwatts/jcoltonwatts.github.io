@@ -3,7 +3,7 @@ title: Introduction to ggplot2
 output: 
   html_document:
     toc: true
-    toc_depth: 3
+    toc_depth: 5
     toc_float: true
 ---
 
@@ -43,7 +43,7 @@ The flexibility and elegance of ggplot comes in part from its ["layered grammar 
   1. data: the data you want to visualize
   2. mapping: how data are assigned to different visual "aesthetics" -- x-axis, y-axis, shape of points, etc...
   3. geom: a geometric object used to represent the data -- points, bars, lines, etc...
-  4. scaling: how values of variables are translated to their visual spacing
+  4. scaling: how values of variables are translated to distances/colors/shapes/sizes
   5. faceting: representing subsets of data using subplots
 
 ### How do I build one?
@@ -68,11 +68,11 @@ Each type of geom can represent different aesthetics. Points, for example, have 
   5. Define scaling of variables if needed (e.g., adjust color range used to represent a variable)
   6. Make adjustments to "fine tune" your graphic -- axes, legends, etc.
   
-### Building a Plot
+## A Step-by-Step Example with Scatterplots
 
 We'll demonstrate this workflow by building a scatterplot, step-by-step. Scatterplots show the relationship between two continuous variables.
 
-#### Load some data
+### Load some data
 
 First, we'll need to load some data. As someone who really enjoys playing around with real data, I thought we could work with some published data on Antarctic penguins. These data were collected by Kristen Gorman with the Palmer Station Long Term Ecological Research Program and later developed into an R package for educational uses by Allison Horst, and Alison Hill, and Kristen Gorman. The published manuscript focused on differences in sexual size dimorphism among 3 species of penguin and their relation to sex differences in foraging ecology. The full data set has really neat info on reproductive success and blood measurements of stable isotopes, but for the sake of brevity we will focus on the morphological measures used to quantify sexual size dimorphism.
 
@@ -112,13 +112,13 @@ head(penguins_df) # use the head() function to look at the first several rows of
 
 Great, that looks like the data made it through unscathed.
 
-#### Deciding what to plot
+### Deciding what to plot
 
 Now we need to decide what we want our plot to look like. Based on an exploration of these data I did in the [module on tidyverse](TidyverseTest.md), I would be interested to know how a penguin's mass scales with its body size, and whether this differs between males and females. I could represent this with a scatterplot, where body size (e.g., flipper length) is on the x-axis and body mass is on the y-axis, and where the points are colored or shaped differently depending on whether the penguin is male or female. It would also be great to add a trend line to plots for males and females to see if the relationship seems different for the sexes, but we'll get to that later.
 
 Try making a sketch of this plot on paper or a whiteboard _before_ you start trying to build it in R. I never cease to surprise myself with how often I _think_ I know what I want to plot, only to find out later that I cannot, in fact, convey my message with that type of plot. While exploring is a necessary part of the process, having a clear mental image of your goal at the outset is invaluable for guiding that journey.
 
-#### Define the data and aesthetic mapping
+### Defining the data and aesthetics
 
 Now that we know what data we want to plot, and which variables we'd like where, we can tell R about this using the ```ggplot()``` function.
 
@@ -136,9 +136,9 @@ Let's inform ```ggplot()``` of our intention:
 ggplot(penguins_df, aes(x = flipper_length_mm, y = body_mass_g)) # data = penguins_df, aes(x = ..., y = ...) defines which variables are mapped to which aesthetics
 ```
 
-Okay, so we got our x and y axes, and they're appopriately named, but there are no data represented. What gives? Well, we haven't yet added a ```geom_``` function to tell ggplot how to represent those data with a geometric object. 
+Okay, so we got our x and y axes, and they're appropriately named, but there are no data represented. What gives? Well, we haven't yet added a ```geom_``` function to tell ggplot how to represent those data with a geometric object. 
 
-#### Step 2: Define the geometric object(s)
+### Defining the geometric object(s)
 
 We'd like these geometrics objects to be points for our scatterplot, so let's use ```geom_point()```. Remember that we add this _after_ the ```ggplot()``` function, using a ```+```. *Make sure that the ```+``` comes _before_ you start a new line with the return key. This tell R that you're not done with ggplot yet, so it will expect more ggplot functions on the next line.
 
@@ -152,15 +152,16 @@ Hey, now those are some data! Note that we didn't have to specify the aesthetics
 Now that we have some points, it's clear that we could show the data by sex if we could just map the points' shape or color to the "sex" variable in our data set. Let's return to our aesthetic mapping to take advantage of this opportunity by using the "color = " argument to the aesthetics.
 
 ```{r echo = TRUE}
-ggplot(penguins_df, aes(x = flipper_length_mm, y = body_mass_g, color = sex)) + # add ", color = sex" to the aesthetic mapping in the ggplot() function
+ # add ", color = sex" to the aesthetic mapping in the ggplot() function
+ggplot(penguins_df, aes(x = flipper_length_mm, y = body_mass_g, color = sex)) +
   geom_point()
 ```
 
-Well isn't that nice. Okay, so we have our data, our aesthetic mapping (now with sex as a color!), and the geometric objects (points) representing the data. I don't think I want to add any other geometric objects for now (lines, bars, more points, etc.), so we're ready to make adjustments to the scaling if we'd like.
+Well isn't that nice. Okay, so we have specified our data, the mapping of variables onto aesthetic elements of our geometric objects (now with sex as a color!), and the types of geometric objects (points) representing the data. I don't think I want to add any other geometric objects for now (lines, bars, more points, etc.), so we're ready to make adjustments to the scaling if we'd like.
 
-#### Define scaling of variables if needed
+### Define scaling of variables
 
-The colors above are okay, but you might want some control over this. The way variables are mapped to aesthetics like size, shape, and color can be controlled through additional ```scale_``` functions like ```scale_color_manual()``` and ```scale_shape_manual()```. These get pretty deep pretty quickly -- there are, for example, several different ```scale_color_``` functions that have different behaviors, and it takes a while to get a good grasp on them.
+The colors above are okay, but you want some control over this. The way variables are mapped to aesthetics like size, shape, and color can be controlled through additional ```scale_``` functions like ```scale_color_manual()``` and ```scale_shape_manual()```. These get pretty deep pretty quickly -- there are, for example, several different ```scale_color_``` functions that have different behaviors, and it takes a while to get a good grasp on them.
 
 Let's try using a different color scale. First we will build our own scale using colors we choose based on some identifier (e.g., a name, hex code, rgb value, or number). Then, we'll briefly check out how to use existing color palettes to pick a set of colors at once.
 
@@ -170,13 +171,16 @@ We can change the color of the points in our scatterplot above using ```scale_co
 colors()
 ```
 
+Let's pick one of those and a random set of rgb() values and use them to set the colors manually.
+
 ```{r echo = TRUE}
 ggplot(penguins_df, aes(x = flipper_length_mm, y = body_mass_g, color = sex)) +
   geom_point() + 
-  scale_color_manual(values = c("tomato2", rgb(0.2, 0.3, 0.6))) # add scale_ function -- I used a name and a set of rgb() values to specify 2 colors
+  # add scale_ function -- I used a name and a set of rgb() values to specify 2 colors
+  scale_color_manual(values = c("tomato2", rgb(0.2, 0.3, 0.6))) 
 ```
 
-That's handy, but you can spend a long time sampling colors and trying to assemble a color palette. Luckily R has lots of built in "color palettes" that we can call on to generate a set of colors to use. These can be divided into palettes roughly analogous to RGB color space (called hue-saturation-value, or HSV colors) and those based on human color perception (hue-chroma-luminance, or HCL colors). I don't have a strong opinion on these at present, but I will focus on HCL here.
+That's handy, but you can spend a long time sampling colors and trying to assemble a color palette. Luckily R has lots of built in color palettes that we can call on to generate a set of colors to use. These can be divided into palettes roughly analogous to RGB color space (called hue-saturation-value, or HSV colors) and those based on human color perception (hue-chroma-luminance, or HCL colors). I don't have a strong opinion on these at present, but I will focus on HCL here.
 
 What color palettes are available in R if we want to use the HCL color space? We can check using the function ```hcl.pals()```.
 
@@ -190,26 +194,25 @@ Ooooh, lots of options! Let's pick one and try to see if we can get a set of col
 hcl.colors(n = 2, palette = "Harmonic")
 ```
 
-So this gives us hex codes for our colors. Nice! We can enter these manually into our ```scale_``` function, or we can nest the ```hcl.colors()``` function inside the ```scale_``` function to skip a step.
+So this gives us hex codes for our colors. Nice! We can enter these manually into our ```scale_``` function like we did above, or we can nest the ```hcl.colors()``` function inside the ```scale_``` function to skip a step.
 
 ```{r echo = TRUE}
-ggplot(penguins_df, aes(x = flipper_length_mm, y = body_mass_g, color = sex)) + # add ", color = sex" to the aesthetic mapping in the ggplot() function
+ggplot(penguins_df, aes(x = flipper_length_mm, y = body_mass_g, color = sex)) +
   geom_point() + 
   scale_color_manual(values = hcl.colors(n = 2, palette = "Harmonic"))
-
 # the code above is equivalent to running the code below. The below uses the hex codes.
 # ggplot(penguins_df, aes(x = flipper_length_mm, y = body_mass_g, color = sex)) + # add ", color = sex" to the aesthetic mapping in the ggplot() function
 #   geom_point() + scale_color_manual(values = c("#C7A76C", "#7DB0DD"))
 ```
 
-Nice! So this might not be my favorite color palette, but now we know how to create our own or use one of the many existing ones.
+So this might not be my favorite color palette, but now we know how to create our own or use one of the many existing ones.
 
 Notice that ggplot won't apply a color to instances where the variable mapped to the color is NA (see the greyed out points?).
 
 Notice also that ggplot is warning you that there are missing values that are dropped during plotting (i.e., their x or y coordinates are unknown). If we want to formally address this, we can add the ```na.rm = TRUE``` option to our ```ggplot()``` function (affects all layers) or to the corresponding ```geom_```.
 
 ```{r echo = TRUE}
-ggplot(penguins_df, aes(x = flipper_length_mm, y = body_mass_g, color = sex)) + # add ", color = sex" to the aesthetic mapping in the ggplot() function
+ggplot(penguins_df, aes(x = flipper_length_mm, y = body_mass_g, color = sex)) + 
   geom_point(na.rm = TRUE) + 
   scale_color_manual(values = hcl.colors(n = 2, palette = "Harmonic"))
 ```
@@ -217,25 +220,27 @@ ggplot(penguins_df, aes(x = flipper_length_mm, y = body_mass_g, color = sex)) + 
 Let's try mapping sex to a point shape, too, since you will sometimes need to do this (e.g., for printing in greyscale)
 
 ```{r echo = TRUE}
-ggplot(penguins_df, aes(x = flipper_length_mm, y = body_mass_g, shape = sex)) + # put ", shape = sex" in the aesthetic mapping in the ggplot() function
+# put ", shape = sex" in the aesthetic mapping in the ggplot() function instead of color.
+ggplot(penguins_df, aes(x = flipper_length_mm, y = body_mass_g, shape = sex)) + 
   geom_point(na.rm = TRUE)
 ```
 
 Finally, we can combine shapes and colors to show even more information (though there may be clearer ways to do this-- see faceting later!). Let's keep shapes as representative of sex, but let colors vary according to species. Note that we'll now need 3 colors, one for each of the 3 species.
 
 ```{r echo = TRUE}
-ggplot(penguins_df, aes(x = flipper_length_mm, y = body_mass_g, shape = sex, color = species)) + # put ", shape = sex" in the aesthetic mapping in the ggplot() function
+# now with shape = sex and color = species
+ggplot(penguins_df, aes(x = flipper_length_mm, y = body_mass_g, shape = sex, color = species)) + 
   geom_point(na.rm = TRUE) +
   scale_color_manual(values = hcl.colors(n = 3, palette = "Harmonic"))
 ```
 
 You'll notice that when we mapped sex to the shape aesthetic for our points, the NAs for sex don't get assigned a symbol type. This means they don't show up in the plot, but NA still shows up in the legend for some reason. That's pretty annoying. In regular practice, this wouldn't really be an issue because we typically would have already filtered our data to remove observations where sex was unknown. However, our present issue gives us an opportunity to explore how to adjust other aspects of our plots like the axes and legends.
 
-#### Make adjustments to "fine tune" your graphic -- axes, legends, etc.
+### Fine Tuning
 
-##### Legends
+#### Legends
 
-Let's take care of that legend first-- it's driving me crazy! We can adjust the legend using the ```breaks =``` argument inside the corresponding ```scale_``` function for our aesthetic. For example, here we were using sex as a shape. We are getting three discrete "breaks" in sex -- female, male, and NA, but we only want female and male. So we need to use something like ```scale_shape_discrete(breaks = c("female", "male"))```.
+Let's take care of that legend first-- it's driving me crazy! We can adjust the legend using the ```breaks =``` argument inside the \ ```scale_``` function for our corresponding aesthetic. For example, here we were using sex as a shape. We are getting three discrete "breaks" in sex -- female, male, and NA, but we only want female and male. So we need to use something like ```scale_shape_discrete(breaks = c("female", "male"))``` to specify our own breaks.
 
 ```{r echo = TRUE}
 ggplot(penguins_df, aes(x = flipper_length_mm, y = body_mass_g, shape = sex, color = species)) +
@@ -244,9 +249,9 @@ ggplot(penguins_df, aes(x = flipper_length_mm, y = body_mass_g, shape = sex, col
   scale_shape_discrete(breaks = c("female", "male"), )
 ```
 
-Much better. We changed the legend as a workaround to a problem you shouldn't encounter too often, but you'll often need to modify them as part of your plotting anyway.
+Much better. Here, we changed the legend as a workaround to a problem you shouldn't encounter too often, but you'll often need to modify them as part of your plotting anyway.
 
-Don't like those symbol types? Use ```scale_shape_manual()``` to set them using the ```values = ``` argument like we did with ```scale_color_manual()``` above. This is often necessary when you have a lot of groups, because ```scale_shape_discrete()``` only generates up to 6 and then starts recycling them! Try typing ?pch to see some of the shape types available in R.
+Don't like those symbol types? Use ```scale_shape_manual()``` to set them using the ```values = ``` argument like we did with ```scale_color_manual()``` above. This is often necessary when you have a lot of groups, because ```scale_shape_discrete()``` only generates up to 6 shapes and then starts recycling them! Try typing ?pch to see some of the shape types available in R.
 
 ```{r echo = TRUE}
 ggplot(penguins_df, aes(x = flipper_length_mm, y = body_mass_g, shape = sex, color = species)) +
@@ -255,7 +260,7 @@ ggplot(penguins_df, aes(x = flipper_length_mm, y = body_mass_g, shape = sex, col
   scale_shape_manual(breaks = c("female", "male"), values = c(10, 4))
 ```
 
-##### Axis Labels
+#### Axis Labels
 
 This one is easy. To specify the x-axis label, just add ```+ xlab("YOUR LABEL HERE")``` to your plot code. I bet you can guess how to change the y-axis label now, too!
 
@@ -264,9 +269,184 @@ ggplot(penguins_df, aes(x = flipper_length_mm, y = body_mass_g, shape = sex, col
   geom_point(na.rm = TRUE) + 
   scale_color_manual(values = hcl.colors(n = 3, palette = "Harmonic")) +
   scale_shape_manual(breaks = c("female", "male"), values = c(10, 4)) +
-  xlab("Flipper Length (mm)") +
-  ylab("Body Mass (g)")
+  labs(x = "Flipper Length (mm)", y = "Body Mass (g)")
+## The below is equivalent, but specifies the x and y labels separately.
+# ggplot(penguins_df, aes(x = flipper_length_mm, y = body_mass_g, shape = sex, color = species)) +
+#   geom_point(na.rm = TRUE) + 
+#   scale_color_manual(values = hcl.colors(n = 3, palette = "Harmonic")) +
+#   scale_shape_manual(breaks = c("female", "male"), values = c(10, 4)) +
+#   xlab("Flipper Length (mm)") +
+#   ylab("Body Mass (g)")
 ```
 
 Now this is starting to look like a publication-quality graphic! How exciting.
 
+#### Themes
+
+Unfortunately the default ggplot "theme" (the collection of non-data options like background colors, grid lines, font sizes, etc.) isn't all that wonderful. We can change these using default themes, specifying our own, or a combination of the two.
+
+A useful starting place is ```theme_bw()```. This black and white theme gets rid of the grey background.
+
+```{r echo = TRUE}
+ggplot(penguins_df, aes(x = flipper_length_mm, y = body_mass_g, shape = sex, color = species)) +
+  geom_point(na.rm = TRUE) + 
+  scale_color_manual(values = hcl.colors(n = 3, palette = "Harmonic")) +
+  scale_shape_manual(breaks = c("female", "male"), values = c(10, 4)) +
+  labs(x = "Flipper Length (mm)", y = "Body Mass (g)") +
+  theme_bw()
+```
+
+But I'd like to get rid of those gridlines too, and maybe change the axis label font size... and what if I want to move the legend? Let's dive into ```theme()``` to modify ```theme_bw()```!
+
+```{r echo = TRUE}
+ggplot(penguins_df, aes(x = flipper_length_mm, y = body_mass_g, shape = sex, color = species)) +
+  geom_point(na.rm = TRUE) + 
+  scale_color_manual(values = hcl.colors(n = 3, palette = "Harmonic")) +
+  scale_shape_manual(breaks = c("female", "male"), values = c(10, 4)) +
+  labs(x = "Flipper Length (mm)", y = "Body Mass (g)") +
+  theme_bw() +
+  theme(panel.grid.major = element_blank(), # use panel.grid.major argument set to element_blank() to get rid of major grid
+        panel.grid.minor = element_blank(), # use panel.grid.minor argument set to element_blank() to get rid of minor grid
+        axis.title = element_text(size = 16), # use axis.title argument set to element_text() to specify options like size, color, etc.
+        legend.position = "bottom", # use legend.position set to bottom, top, left, right, or x,y coords (scaled 0 to 1). Use "none" to omit.
+        aspect.ratio = 1) # use aspect.ratio to set the height:width ratio of the plot.
+```
+
+There are _a lot_ of theme options available. This is where you can really stretch your creative muscles and have fun! Check out the ?theme() page for a staggering list of tweakable plotting elements. Don't worry-- unless you're creating some really complex graphics (or just having fun with it), you can usually make attractive and informative plots with code that is not much more complicated than the code above.
+
+## Trendlines
+
+It's worth a brief aside to note that ggplot also has built-in tools for visualizing trends in your plotted data. One helfpul function for this is ```geom_smooth()```. This function takes a ```method = ``` argument that allows you to specify how you want R to calculate the trendline. Popular options include a linear model (lm), loess regression, general additive model (gam), and generalized linear models (glm). Let's try adding a linear model fit to our plot.
+
+```{r echo = TRUE}
+ggplot(penguins_df, aes(x = flipper_length_mm, y = body_mass_g, shape = sex, color = species)) +
+  geom_point(na.rm = TRUE) + 
+  scale_color_manual(values = hcl.colors(n = 3, palette = "Harmonic")) +
+  scale_shape_manual(breaks = c("female", "male"), values = c(10, 4)) +
+  labs(x = "Flipper Length (mm)", y = "Body Mass (g)") +
+  theme_bw() +
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(), 
+        axis.title = element_text(size = 16),
+        legend.position = "bottom",
+        aspect.ratio = 1) + 
+  geom_smooth(method = "lm", se = TRUE) # the additional argument se = TRUE tells R to show the confidence intervals too.
+```
+
+Whoa, what happened here? Well, because we map sex and species onto shape and color, when we call geom_smooth() it assumes that we would like to do this for each group separately. You'll also notice there are more than 2 groups for Adelies and Gentoos -- those NAs are getting treated as separate groups! Did I mention that filtering data is important?
+
+We can override the aesthetics we previously specified by defining new aesthetics in geom_smooth() and asking it to bypass the old aesthetics by setting ```inherit.aes = FALSE```. This will leave all preceding lines of code unaffected, just our geom_smooth() changes. In this way you can build up layers based on different variables, subsets of data, etc.
+
+```{r echo = TRUE}
+ggplot(penguins_df, aes(x = flipper_length_mm, y = body_mass_g, shape = sex, color = species)) +
+  geom_point(na.rm = TRUE) + 
+  scale_color_manual(values = hcl.colors(n = 3, palette = "Harmonic")) +
+  scale_shape_manual(breaks = c("female", "male"), values = c(10, 4)) +
+  labs(x = "Flipper Length (mm)", y = "Body Mass (g)") +
+  theme_bw() +
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(), 
+        axis.title = element_text(size = 16),
+        legend.position = "bottom",
+        aspect.ratio = 1) + 
+  # add inherit.aes = FALSE to prevent geom_smooth() from inheriting the previous aesthetics
+  # define new aesthetics specific to geom_smooth() using aes() inside geom_smooth()
+  geom_smooth(inherit.aes = FALSE, aes(x = flipper_length_mm, y = body_mass_g), method = "lm", se = TRUE) 
+```
+
+Great, now we have points grouped by sex and species, but one trend line to rule them all.
+
+This is probably a bad idea though. Can we split the trendlines back up by sex and species, but present them neater? We need ```facet_wrap()```!
+
+## Facetting
+
+"Facetting" is a tool in ggplot to let you create multiple panels of a plot with ease. The syntax is to add ```facet_wrap(~ YOUR FACETTING VARIABLE HERE)``` to your ggplot code. Let's leave the two sexes in the same plot, but facet by species so each species has a separate panel.
+
+```{r echo = TRUE}
+ggplot(penguins_df,
+       aes(x = flipper_length_mm, y = body_mass_g, shape = sex, color = species)) + # can still color by species for emphasis
+  geom_point(na.rm = TRUE) + 
+  scale_color_manual(values = hcl.colors(n = 3, palette = "Harmonic")) +
+  scale_shape_manual(breaks = c("female", "male"), values = c(10, 4)) +
+  labs(x = "Flipper Length (mm)", y = "Body Mass (g)") +
+  theme_bw() +
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(), 
+        axis.title = element_text(size = 16),
+        legend.position = "bottom",
+        aspect.ratio = 1) + 
+  # change geom_smooth back so that it uses the "global" aesthetics
+  geom_smooth(method = "lm", se = TRUE) +
+  facet_wrap(~ species) # make subplots for each species using facet_wrap().
+```
+
+Finally, let's get rid of those cases where the sex variable is NA. This isn't really a ggplot step, but it's helpful to see how you could give ggplot a subset of your data to start with. We'll use ```penguins_df[!is.na(penguins_df$sex),]``` as a way to select only the rows in our data set for which the sex variable is _not_ (notice the logical negation symbol ```!```) NA.
+
+```{r echo = TRUE}
+ggplot(penguins_df[!is.na(penguins_df$sex),],
+       aes(x = flipper_length_mm, y = body_mass_g, shape = sex, color = species)) + # can still color by species for emphasis
+  geom_point(na.rm = TRUE) + 
+  scale_color_manual(values = hcl.colors(n = 3, palette = "Harmonic")) +
+  scale_shape_manual(breaks = c("female", "male"), values = c(10, 4)) +
+  labs(x = "Flipper Length (mm)", y = "Body Mass (g)") +
+  theme_bw() +
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(), 
+        axis.title = element_text(size = 16),
+        legend.position = "bottom",
+        aspect.ratio = 1) + 
+  # change geom_smooth back so that it uses the "global" aesthetics
+  geom_smooth(method = "lm", se = TRUE) +
+  facet_wrap(~ species) # make subplots for each species using facet_wrap().
+```
+
+There we have it! It looks like body mass increases more with flipper length in male Chinstraps compared to female Chinstraps (notice the steeper slope of the line running through the x's compared to the crossed circles), but this is weaker or maybe even opposite in the others. Weird!
+
+## Saving ggplots
+
+We can save a ggplot to our local environment at any time by saving it as an object. One really handy feature of this is that we can then continue to add layers to the plot by just adding them to that object.
+
+```{r echo = TRUE}
+# create an object, called pbase here, to store a graphic. Let's store the graphic with sex mapped to shape and color to species, with a trendline, but no facetting.
+pbase = ggplot(penguins_df[!is.na(penguins_df$sex),],
+       aes(x = flipper_length_mm, y = body_mass_g, shape = sex, color = species)) + # can still color by species for emphasis
+  geom_point(na.rm = TRUE) + 
+  scale_color_manual(values = hcl.colors(n = 3, palette = "Harmonic")) +
+  scale_shape_manual(breaks = c("female", "male"), values = c(10, 4)) +
+  labs(x = "Flipper Length (mm)", y = "Body Mass (g)") +
+  theme_bw() +
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(), 
+        axis.title = element_text(size = 16),
+        legend.position = "bottom",
+        aspect.ratio = 1) + 
+  # change geom_smooth back so that it uses the "global" aesthetics
+  geom_smooth(method = "lm", se = TRUE)
+# look at the object
+pbase
+```
+
+Now we can call on our object ```pbase``` to add more plot elements. Let's add facetting by species.
+
+```{r echo = TRUE}
+pbase + facet_wrap(~ species)
+```
+
+So when we get to a good "stopping point" with our graphic building, we can save a ggplot graphic as an object to shorten the code in further tweaking. Handy!
+
+How about saving it for use outside of R? We can use the function ```ggsave()```.
+
+NOTE: ```ggsave()``` always writes the last ggplot you _displayed_ to the file name and format you specify.
+It's good practice to save your ggplot to a local object, view the object, and then run ```ggsave()```.
+
+```{r echo = TRUE, eval = FALSE}
+ptop = pbase + facet_wrap(~ species) # save our final plot as an object by adding facet_wrap() to the base plot (pbase)
+ptop # view ptop
+ggsave("bodyMassbyFlipperLength.png") # pick a file name, including the extension to choose the file format. I used .png here.
+```
+
+You can also edit some of the saved file's attributes. For example, we can specify the width and height of the saved plot and the units in which these dimensions are measured.
+
+```{r echo = TRUE, eval = FALSE}
+ggsave("bodyMassbyFlipperLength.pdf", height = 4, width = 6, units = "in") # specify a 4x6" PDF of the plot, in this case.
+```
