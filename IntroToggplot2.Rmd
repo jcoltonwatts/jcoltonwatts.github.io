@@ -160,30 +160,113 @@ Well isn't that nice. Okay, so we have our data, our aesthetic mapping (now with
 
 #### Define scaling of variables if needed
 
-The colors above are okay, but you might want some control over this. The way variables are mapped to aesthetics like size, shape, and color can be controlled through additional ```scale_``` functions like ```scale_color_discrete()``` and ```scale_shape_discrete()```. These get pretty deep pretty quickly -- there are, for example, several different ```scale_color_``` functions that have different behaviors, and it takes a while to get a good grasp on them.
+The colors above are okay, but you might want some control over this. The way variables are mapped to aesthetics like size, shape, and color can be controlled through additional ```scale_``` functions like ```scale_color_manual()``` and ```scale_shape_manual()```. These get pretty deep pretty quickly -- there are, for example, several different ```scale_color_``` functions that have different behaviors, and it takes a while to get a good grasp on them.
 
-Let's try using a different color scale. R has lots of built in "color palettes" that we can call on to generate a set of colors to use. There are also tons of fun packages that include various color palettes. Let's try using the color palette ```rainbow```.
+Let's try using a different color scale. First we will build our own scale using colors we choose based on some identifier (e.g., a name, hex code, rgb value, or number). Then, we'll briefly check out how to use existing color palettes to pick a set of colors at once.
+
+We can change the color of the points in our scatterplot above using ```scale_color_manual()```, provided we tell the function what values of color we'd like to have. We can use (and mix!) syntax for the colors themselves. See the available colors using ```colors()```. Pick a color by name (in quotes), number (e.g., colors()[1]), RGB value, or hex code (also in quotes).
 
 ```{r echo = TRUE}
-rainbow(3)
+colors()
+```
+
+```{r echo = TRUE}
+ggplot(penguins_df, aes(x = flipper_length_mm, y = body_mass_g, color = sex)) +
+  geom_point() + 
+  scale_color_manual(values = c("tomato2", rgb(0.2, 0.3, 0.6))) # add scale_ function -- I used a name and a set of rgb() values to specify 2 colors
+```
+
+That's handy, but you can spend a long time sampling colors and trying to assemble a color palette. Luckily R has lots of built in "color palettes" that we can call on to generate a set of colors to use. These can be divided into palettes roughly analogous to RGB color space (called hue-saturation-value, or HSV colors) and those based on human color perception (hue-chroma-luminance, or HCL colors). I don't have a strong opinion on these at present, but I will focus on HCL here.
+
+What color palettes are available in R if we want to use the HCL color space? We can check using the function ```hcl.pals()```.
+
+```{r echo = TRUE}
+hcl.pals()
+```
+
+Ooooh, lots of options! Let's pick one and try to see if we can get a set of colors from it. I'm going to try "Harmonic", because that sounds like a cool name. Use the ```hcl.colors()``` function to specify the number of colors you need (n = ...) and the palette you'd like them from (palette = ...). Try one (or a few) of your own!
+
+```{r echo = TRUE}
+hcl.colors(n = 2, palette = "Harmonic")
+```
+
+So this gives us hex codes for our colors. Nice! We can enter these manually into our ```scale_``` function, or we can nest the ```hcl.colors()``` function inside the ```scale_``` function to skip a step.
+
+```{r echo = TRUE}
 ggplot(penguins_df, aes(x = flipper_length_mm, y = body_mass_g, color = sex)) + # add ", color = sex" to the aesthetic mapping in the ggplot() function
-  geom_point() + scale_color_discrete(type = rainbow(3))
+  geom_point() + 
+  scale_color_manual(values = hcl.colors(n = 2, palette = "Harmonic"))
+
+# the code above is equivalent to running the code below. The below uses the hex codes.
+# ggplot(penguins_df, aes(x = flipper_length_mm, y = body_mass_g, color = sex)) + # add ", color = sex" to the aesthetic mapping in the ggplot() function
+#   geom_point() + scale_color_manual(values = c("#C7A76C", "#7DB0DD"))
 ```
-Those colors are a little RGB unfriendly. Can we pick a different set of colors from rainbow()? Sure!
+
+Nice! So this might not be my favorite color palette, but now we know how to create our own or use one of the many existing ones.
+
+Notice that ggplot won't apply a color to instances where the variable mapped to the color is NA (see the greyed out points?).
+
+Notice also that ggplot is warning you that there are missing values that are dropped during plotting (i.e., their x or y coordinates are unknown). If we want to formally address this, we can add the ```na.rm = TRUE``` option to our ```ggplot()``` function (affects all layers) or to the corresponding ```geom_```.
 
 ```{r echo = TRUE}
-rainbow(3, start = 0.1)
-rainbow()
 ggplot(penguins_df, aes(x = flipper_length_mm, y = body_mass_g, color = sex)) + # add ", color = sex" to the aesthetic mapping in the ggplot() function
-  geom_point() + scale_color_discrete(type = rainbow(3, start = 0.9))
+  geom_point(na.rm = TRUE) + 
+  scale_color_manual(values = hcl.colors(n = 2, palette = "Harmonic"))
 ```
 
-
-Let's try it with shape, too, since you will sometimes need to do this (e.g., for printing in greyscale)
+Let's try mapping sex to a point shape, too, since you will sometimes need to do this (e.g., for printing in greyscale)
 
 ```{r echo = TRUE}
-ggplot(penguins_df, aes(x = flipper_length_mm, y = body_mass_g, shape = sex)) + # add ", color = sex" to the aesthetic mapping in the ggplot() function
-  geom_point()
+ggplot(penguins_df, aes(x = flipper_length_mm, y = body_mass_g, shape = sex)) + # put ", shape = sex" in the aesthetic mapping in the ggplot() function
+  geom_point(na.rm = TRUE)
 ```
 
-You'll notice that in this case the data with NAs for sex don't get assigned a symbol type, so they don't show up. That's pretty annoying. Let's try to fix it using the ```scale_shape_manual()``` function.
+Finally, we can combine shapes and colors to show even more information (though there may be clearer ways to do this-- see faceting later!). Let's keep shapes as representative of sex, but let colors vary according to species. Note that we'll now need 3 colors, one for each of the 3 species.
+
+```{r echo = TRUE}
+ggplot(penguins_df, aes(x = flipper_length_mm, y = body_mass_g, shape = sex, color = species)) + # put ", shape = sex" in the aesthetic mapping in the ggplot() function
+  geom_point(na.rm = TRUE) +
+  scale_color_manual(values = hcl.colors(n = 3, palette = "Harmonic"))
+```
+
+You'll notice that when we mapped sex to the shape aesthetic for our points, the NAs for sex don't get assigned a symbol type. This means they don't show up in the plot, but NA still shows up in the legend for some reason. That's pretty annoying. In regular practice, this wouldn't really be an issue because we typically would have already filtered our data to remove observations where sex was unknown. However, our present issue gives us an opportunity to explore how to adjust other aspects of our plots like the axes and legends.
+
+#### Make adjustments to "fine tune" your graphic -- axes, legends, etc.
+
+##### Legends
+
+Let's take care of that legend first-- it's driving me crazy! We can adjust the legend using the ```breaks =``` argument inside the corresponding ```scale_``` function for our aesthetic. For example, here we were using sex as a shape. We are getting three discrete "breaks" in sex -- female, male, and NA, but we only want female and male. So we need to use something like ```scale_shape_discrete(breaks = c("female", "male"))```.
+
+```{r echo = TRUE}
+ggplot(penguins_df, aes(x = flipper_length_mm, y = body_mass_g, shape = sex, color = species)) +
+  geom_point(na.rm = TRUE) + 
+  scale_color_manual(values = hcl.colors(n = 3, palette = "Harmonic")) +
+  scale_shape_discrete(breaks = c("female", "male"), )
+```
+
+Much better. We changed the legend as a workaround to a problem you shouldn't encounter too often, but you'll often need to modify them as part of your plotting anyway.
+
+Don't like those symbol types? Use ```scale_shape_manual()``` to set them using the ```values = ``` argument like we did with ```scale_color_manual()``` above. This is often necessary when you have a lot of groups, because ```scale_shape_discrete()``` only generates up to 6 and then starts recycling them! Try typing ?pch to see some of the shape types available in R.
+
+```{r echo = TRUE}
+ggplot(penguins_df, aes(x = flipper_length_mm, y = body_mass_g, shape = sex, color = species)) +
+  geom_point(na.rm = TRUE) + 
+  scale_color_manual(values = hcl.colors(n = 3, palette = "Harmonic")) +
+  scale_shape_manual(breaks = c("female", "male"), values = c(10, 4))
+```
+
+##### Axis Labels
+
+This one is easy. To specify the x-axis label, just add ```+ xlab("YOUR LABEL HERE")``` to your plot code. I bet you can guess how to change the y-axis label now, too!
+
+```{r echo = TRUE}
+ggplot(penguins_df, aes(x = flipper_length_mm, y = body_mass_g, shape = sex, color = species)) +
+  geom_point(na.rm = TRUE) + 
+  scale_color_manual(values = hcl.colors(n = 3, palette = "Harmonic")) +
+  scale_shape_manual(breaks = c("female", "male"), values = c(10, 4)) +
+  xlab("Flipper Length (mm)") +
+  ylab("Body Mass (g)")
+```
+
+Now this is starting to look like a publication-quality graphic! How exciting.
+
