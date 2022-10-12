@@ -9,7 +9,7 @@ output:
 
 ## Background
 
-While R provides ready-to-go tools for basic data visualization, it can quickly become cumbersome trying to customize these to more specific needs. The R package _ggplot2_ provides an alternative "grammar of graphics" that makes constructing high-quality, nuanced graphics a lot easier. At the same time, _ggplot2_ accomplishes this by adopting its own peculiar syntax and structure, so it takes a little getting used to. It's well worth it though, as I hope this module will show!
+While R provides ready-to-go tools for basic data visualization, it can quickly become cumbersome trying to customize these to more specific needs. The R package _ggplot2_ provides an alternative "grammar of graphics" that makes constructing high-quality, nuanced graphics a lot easier. At the same time, _ggplot2_ accomplishes this by adopting its own syntax and structure, so it takes a little getting used to. It's well worth it though, as I hope this module will show.
 
 ## Objectives
 
@@ -20,5 +20,170 @@ We really have one objective today: make a pretty plot! But we can break that do
   3. Build a plot
   4. Save the graphic to a file
   
-## Install and load ggplot2
+## Install and Load ggplot2
 
+To install an R package, use the ```install.packages()``` function.
+
+```{r echo = TRUE, eval = FALSE}
+install.packages("ggplot2")
+```
+
+Installing the package gets it onto our computer, but not loaded into our current R session. To do that, we need ```library()```.
+
+```{r echo= TRUE}
+library(ggplot2)
+```
+
+## Basics of ggplot Syntax
+
+### What's in a ggplot graphic?
+
+The flexibility and elegance of ggplot comes in part from its ["layered grammar of graphics"](http://vita.had.co.nz/papers/layered-grammar.pdf). In essence, ggplot allows us to build complex graphics from multiple "layers" of information. The resulting graphics objects have the following components:
+
+  1. data: the data you want to visualize
+  2. mapping: how data are assigned to different visual "aesthetics" -- x-axis, y-axis, shape of points, etc...
+  3. geom: a geometric object used to represent the data -- points, bars, lines, etc...
+  4. scaling: how values of variables are translated to their visual spacing
+  5. faceting: representing subsets of data using subplots
+
+### How do I build one?
+
+The structure of a ggplot graphic also gives us a nice workflow for building one of our own:
+
+  1. specify the data using the ```ggplot()``` function.
+  2. add aesthetic mapping using the ```aes()``` function.
+    - you can set aesthetics within the ```ggplot()``` function to have them apply to all subsequent layers, or you can set them within each individual ```geom_``` function you use to create the objects representing the data.
+  3. Define the geometric objects you'd like to represent your data using the various ```geom_``` functions. These are added _after_ we define the data and any global aesthetic mapping in the ```gplot()``` function. We simply add them to the end of our ggplot workflow with a ```+```. Some example geoms are:
+  
+  - ```geom_points()```: represents the data with points (requires at least x, y coordinates)
+  - ```geom_boxplot()```: represents the data with boxplots (requires at least one variable x)
+  - ```geom_violin()```: represents the data with violin plots (requires at least one variable x)
+  - ```geom_histogram()```: represents the frequency of different values of variables (requires at least one variable x)
+  - ```geom_line()```: represents the data with a line -- helpful for time series. Careful-- not the same as fitting a line to the data.
+  - ```geom_smooth()```: represents the data with a smoothed curve and optional confidence intervals. There are options to change what statistical method is used to generate the curve, including linear models, loess regressions, and generalized additive models.
+
+Each type of geom can represent different aesthetics. Points, for example, have a position, color, shape, and size that we can use to represent data. Boxes in a boxplot, on the other hand, have heights, widths, and colors. It's often helpful to check the help file for whatever geom you'd like to use to see what aesthetics are available to map variables to.
+    
+  4. Add any additional plot elements (e.g., other data subsets, other response variables, trend lines) by appending more ```geom_``` or ```stat_``` functions to the end with ```+```. There are a lot of different options available, and you can even write your own functions to use.
+  5. Define scaling of variables if needed (e.g., adjust color range used to represent a variable)
+  6. Make adjustments to "fine tune" your graphic -- axes, legends, etc.
+  
+### Building a Plot
+
+We'll demonstrate this workflow by building a scatterplot, step-by-step. Scatterplots show the relationship between two continuous variables.
+
+#### Load some data
+
+First, we'll need to load some data. As someone who really enjoys playing around with real data, I thought we could work with some published data on Antarctic penguins. These data were collected by Kristen Gorman with the Palmer Station Long Term Ecological Research Program and later developed into an R package for educational uses by Allison Horst, and Alison Hill, and Kristen Gorman. The published manuscript focused on differences in sexual size dimorphism among 3 species of penguin and their relation to sex differences in foraging ecology. The full data set has really neat info on reproductive success and blood measurements of stable isotopes, but for the sake of brevity we will focus on the morphological measures used to quantify sexual size dimorphism.
+
+Let's install the _palmerpenguins_ package.
+
+```{r eval = FALSE, echo = TRUE}
+install.packages("palmerpenguins") # install the package
+```
+
+And now let's load it.
+
+```{r eval = TRUE, echo = TRUE}
+library(palmerpenguins) # load it in current R session
+```
+
+The data we'll be using are now available in an object called ```penguins```. The full data are in ```penguins_raw```, which I encourage you to explore on your own later. 
+
+Let's take a look at our data set using the ```print()``` function.
+
+```{r echo = TRUE}
+print(penguins)
+```
+
+We see that we have variables (columns) for species, island, 4 different morphological variables, sex, and the year of observation. R also gives us some information about this object -- it says that it is a ```tibble```, tells us the size of the tibble (344 rows by 8 columns), and under each variable we get a nice summary of the type of data stored there (factors ("fctr"), machine precision numbers ("dbl"), integers ("int), etc.). The ```tibble``` is a particular type of ```data.frame``` that is used as part of the tidyverse approach to data analysis and visualization. _ggplot2_ is part of the tidyverse, but we can also use it as a standalone package without getting into all the other features of the tidyverse. This is what we'll do here. If you're interested in learning more about tidyverse, check out [this module](TidyverseTest.md).
+
+Let's start by turning the ```tibble``` into a regular ```data.frame```. This isn't strictly necessary because _ggplot2_ would largely treat the data the same way, but we'll do this anyway to formally sever our ties to the rest of the tidyverse. 
+
+```{r echo = TRUE}
+penguins_df = as.data.frame(penguins) # Create a new object called penguins_df. This object is the penguins tibble, but as a data frame.
+```
+
+Let's check that this did what we intended before we move on. One of the nastier elements of base R's ```data.frame``` is that if we use our ```print()``` function from above to look at it, it will flood the console with data. To get a nice little preview like the tibble gave us, use ```head()```.
+
+```{r echo = TRUE}
+head(penguins_df) # use the head() function to look at the first several rows of the penguins_df data frame. Careful that you are now using penguins_df!
+```
+
+Great, that looks like the data made it through unscathed.
+
+#### Deciding what to plot
+
+Now we need to decide what we want our plot to look like. Based on an exploration of these data I did in the [module on tidyverse](TidyverseTest.md), I would be interested to know how a penguin's mass scales with its body size, and whether this differs between males and females. I could represent this with a scatterplot, where body size (e.g., flipper length) is on the x-axis and body mass is on the y-axis, and where the points are colored or shaped differently depending on whether the penguin is male or female. It would also be great to add a trend line to plots for males and females to see if the relationship seems different for the sexes, but we'll get to that later.
+
+Try making a sketch of this plot on paper or a whiteboard _before_ you start trying to build it in R. I never cease to surprise myself with how often I _think_ I know what I want to plot, only to find out later that I cannot, in fact, convey my message with that type of plot. While exploring is a necessary part of the process, having a clear mental image of your goal at the outset is invaluable for guiding that journey.
+
+#### Define the data and aesthetic mapping
+
+Now that we know what data we want to plot, and which variables we'd like where, we can tell R about this using the ```ggplot()``` function.
+
+But, if you're like me, you've already forgotten what those variables were named in the data set. Use ```names()``` to refresh your memory first.
+
+```{r echo = TRUE}
+names(penguins_df)
+```
+
+Okay, now I know I want ```flipper_length_mm``` on the x-axis and ```body_mass_g``` on the y-axis. Eventually, we'll want to color/shape those points by ```"sex"```, but we'll come back to that in a moment.
+
+Let's inform ```ggplot()``` of our intention:
+
+```{r echo = TRUE}
+ggplot(penguins_df, aes(x = flipper_length_mm, y = body_mass_g)) # data = penguins_df, aes(x = ..., y = ...) defines which variables are mapped to which aesthetics
+```
+
+Okay, so we got our x and y axes, and they're appopriately named, but there are no data represented. What gives? Well, we haven't yet added a ```geom_``` function to tell ggplot how to represent those data with a geometric object. 
+
+#### Step 2: Define the geometric object(s)
+
+We'd like these geometrics objects to be points for our scatterplot, so let's use ```geom_point()```. Remember that we add this _after_ the ```ggplot()``` function, using a ```+```. *Make sure that the ```+``` comes _before_ you start a new line with the return key. This tell R that you're not done with ggplot yet, so it will expect more ggplot functions on the next line.
+
+```{r echo = TRUE}
+ggplot(penguins_df, aes(x = flipper_length_mm, y = body_mass_g)) + # notice the plus sign here *before* the return to start a new line
+  geom_point()
+```
+
+Hey, now those are some data! Note that we didn't have to specify the aesthetics again inside the ```geom_point()``` function because we set them up for all the layers in the plot using the ```ggplot()``` function. We could have also specified the aesthetics inside ```geom_point()```, for example if we wanted to plot different variables on the same plot. 
+
+Now that we have some points, it's clear that we could show the data by sex if we could just map the points' shape or color to the "sex" variable in our data set. Let's return to our aesthetic mapping to take advantage of this opportunity by using the "color = " argument to the aesthetics.
+
+```{r echo = TRUE}
+ggplot(penguins_df, aes(x = flipper_length_mm, y = body_mass_g, color = sex)) + # add ", color = sex" to the aesthetic mapping in the ggplot() function
+  geom_point()
+```
+
+Well isn't that nice. Okay, so we have our data, our aesthetic mapping (now with sex as a color!), and the geometric objects (points) representing the data. I don't think I want to add any other geometric objects for now (lines, bars, more points, etc.), so we're ready to make adjustments to the scaling if we'd like.
+
+#### Define scaling of variables if needed
+
+The colors above are okay, but you might want some control over this. The way variables are mapped to aesthetics like size, shape, and color can be controlled through additional ```scale_``` functions like ```scale_color_discrete()``` and ```scale_shape_discrete()```. These get pretty deep pretty quickly -- there are, for example, several different ```scale_color_``` functions that have different behaviors, and it takes a while to get a good grasp on them.
+
+Let's try using a different color scale. R has lots of built in "color palettes" that we can call on to generate a set of colors to use. There are also tons of fun packages that include various color palettes. Let's try using the color palette ```rainbow```.
+
+```{r echo = TRUE}
+rainbow(3)
+ggplot(penguins_df, aes(x = flipper_length_mm, y = body_mass_g, color = sex)) + # add ", color = sex" to the aesthetic mapping in the ggplot() function
+  geom_point() + scale_color_discrete(type = rainbow(3))
+```
+Those colors are a little RGB unfriendly. Can we pick a different set of colors from rainbow()? Sure!
+
+```{r echo = TRUE}
+rainbow(3, start = 0.1)
+rainbow()
+ggplot(penguins_df, aes(x = flipper_length_mm, y = body_mass_g, color = sex)) + # add ", color = sex" to the aesthetic mapping in the ggplot() function
+  geom_point() + scale_color_discrete(type = rainbow(3, start = 0.9))
+```
+
+
+Let's try it with shape, too, since you will sometimes need to do this (e.g., for printing in greyscale)
+
+```{r echo = TRUE}
+ggplot(penguins_df, aes(x = flipper_length_mm, y = body_mass_g, shape = sex)) + # add ", color = sex" to the aesthetic mapping in the ggplot() function
+  geom_point()
+```
+
+You'll notice that in this case the data with NAs for sex don't get assigned a symbol type, so they don't show up. That's pretty annoying. Let's try to fix it using the ```scale_shape_manual()``` function.

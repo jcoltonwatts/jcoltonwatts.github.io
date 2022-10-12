@@ -250,7 +250,7 @@ div.tocify {
 
 <div id="background" class="section level2">
 <h2>Background</h2>
-<p>While R provides ready-to-go tools for basic data visualization, it can quickly become cumbersome trying to customize these to more specific needs. The R package <em>ggplot2</em> provides an alternative “grammar of graphics” that makes constructing high-quality, nuanced graphics a lot easier. At the same time, <em>ggplot2</em> accomplishes this by adopting its own peculiar syntax and structure, so it takes a little getting used to. It’s well worth it though, as I hope this module will show!</p>
+<p>While R provides ready-to-go tools for basic data visualization, it can quickly become cumbersome trying to customize these to more specific needs. The R package <em>ggplot2</em> provides an alternative “grammar of graphics” that makes constructing high-quality, nuanced graphics a lot easier. At the same time, <em>ggplot2</em> accomplishes this by adopting its own syntax and structure, so it takes a little getting used to. It’s well worth it though, as I hope this module will show.</p>
 </div>
 <div id="objectives" class="section level2">
 <h2>Objectives</h2>
@@ -259,11 +259,53 @@ div.tocify {
 <li>Install and load ggplot2</li>
 <li>Discuss basics of ggplot syntax</li>
 <li>Build a plot</li>
-<li>Save the plot</li>
+<li>Save the graphic to a file</li>
 </ol>
 </div>
 <div id="install-and-load-ggplot2" class="section level2">
-<h2>Install and load ggplot2</h2>
+<h2>Install and Load ggplot2</h2>
+<p>To install an R package, use the <code>install.packages()</code> function.</p>
+<pre class="r"><code>install.packages(&quot;ggplot2&quot;)</code></pre>
+<p>Installing the package gets it onto our computer, but not loaded into our current R session. To do that, we need <code>library()</code>.</p>
+<pre class="r"><code>library(ggplot2)</code></pre>
+</div>
+<div id="basics-of-ggplot-syntax" class="section level2">
+<h2>Basics of ggplot Syntax</h2>
+<div id="whats-in-a-ggplot-graphic" class="section level3">
+<h3>What’s in a ggplot graphic?</h3>
+<p>The flexibility and elegance of ggplot comes in part from its <a href="http://vita.had.co.nz/papers/layered-grammar.pdf">“layered grammar of graphics”</a>. In essence, ggplot allows us to build complex graphics from multiple “layers” of information. The resulting graphics objects have the following components:</p>
+<ol style="list-style-type: decimal">
+<li>data: the data you want to visualize</li>
+<li>mapping: how data are assigned to different visual “aesthetics” – x-axis, y-axis, shape of points, etc…</li>
+<li>geom: a geometric object used to represent the data – points, bars, lines, etc…</li>
+<li>scaling: how values of variables are translated to their visual spacing</li>
+<li>faceting: representing subsets of data using subplots</li>
+</ol>
+</div>
+<div id="how-do-i-build-one" class="section level3">
+<h3>How do I build one?</h3>
+<p>The structure of a ggplot graphic also gives us a nice workflow for building one of our own:</p>
+<ol style="list-style-type: decimal">
+<li>specify the data using the <code>ggplot()</code> function.</li>
+<li>add aesthetic mapping using the <code>aes()</code> function. - you can set aesthetics within the <code>ggplot()</code> function to have them apply to all subsequent layers, or you can set them within each individual <code>geom_</code> function you use to create the objects representing the data.</li>
+<li>Define the geometric objects you’d like to represent your data using the various <code>geom_</code> functions. These are added <em>after</em> we define the data and any global aesthetic mapping in the <code>gplot()</code> function. We simply add them to the end of our ggplot workflow with a <code>+</code>. Some example geoms are:</li>
+</ol>
+<pre><code>- ```geom_points()```: represents the data with points (requires at least x, y coordinates)
+- ```geom_boxplot()```: represents the data with boxplots (requires at least one variable x)
+- ```geom_violin()```: represents the data with violin plots (requires at least one variable x)
+- ```geom_histogram()```: represents the frequency of different values of variables (requires at least one variable x)
+- ```geom_line()```: represents the data with a line -- helpful for time series. Careful-- not the same as fitting a line to the data.
+- ```geom_smooth()```: represents the data with a smoothed curve and optional confidence intervals. There are options to change what statistical method is used to generate the line.</code></pre>
+<p>Each type of geom can represent different aesthetics. Points, for example, have a position, color, shape, and size that we can use to represent data. Boxes in a boxplot, on the other hand, have heights, widths, and colors. It’s often helpful to check the help file for whatever geom you’d like to use to see what aesthetics are available to map variables to.</p>
+<ol start="4" style="list-style-type: decimal">
+<li>Add any additional plot elements (e.g., other data subsets, other response variables, trend lines) by appending more <code>geom_</code> or <code>stat_</code> functions to the end with <code>+</code>. There are a lot of different options available, and you can even write your own functions to use.</li>
+<li>Define scaling of variables if needed (e.g., adjust color range used to represent a variable)</li>
+<li>Make adjustments to “fine tune” your graphic – axes, legends, etc.</li>
+</ol>
+</div>
+<div id="section" class="section level3">
+<h3></h3>
+</div>
 </div>
 
 

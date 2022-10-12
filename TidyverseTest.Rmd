@@ -10,7 +10,7 @@ output:
 
 ## Background
 
-A lot of your time working in R will likely be spent organizing, cleaning, and subsetting data to prepare it for plotting and statistical analysis. The [tidyverse](https://www.tidyverse.org/) is a set of R packages that make this easier by establishing a shared set of standards for how to represent and work with data sets. It includes commonly used packages for managing data like [dplyr](https://dplyr.tidyverse.org/) and [tidyr](https://tidyr.tidyverse.org/), and the [ggplot2](https://ggplot2.tidyverse.org/) graphics package. This module focuses on data management with dplyr and tidyr. For more an introduction to ggplot2, check out [this module](GettingStartedggplot2.md).
+A lot of your time working in R will likely be spent organizing, cleaning, and subsetting data to prepare it for plotting and statistical analysis. The [tidyverse](https://www.tidyverse.org/) is a set of R packages that make this easier by establishing a shared set of standards for how to represent and work with data sets. It includes commonly used packages for managing data like [dplyr](https://dplyr.tidyverse.org/) and [tidyr](https://tidyr.tidyverse.org/), and the [ggplot2](https://ggplot2.tidyverse.org/) graphics package. This module focuses on data management with dplyr and tidyr. For more an introduction to ggplot2, check out [this module](IntroToggplot2.md).
 
 ## Objectives
 
