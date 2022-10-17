@@ -12,7 +12,7 @@ header:
   show_overlay_excerpt: true
 ---
 
-### Working in the R Statistical Software
+## Working in the R Statistical Software
 
 I developed these learning modules to provide an introduction to data analysis and visualization in R. I taught these as part of Texas A&M University's 2022 Open Source for Open Sciene (OSOS) Workshop, a free, weekend-long event focused on providing new R users with hands-on experience with R through live-coding demos and interactive exercises.
 
@@ -20,7 +20,7 @@ These materials draw on the resources available from Data Carpentry, as well as 
 
 I plan to add additional modules in the future, and I look forward to developing this into my own Intro to R course soon.
 
-## R Learning Modules
+### R Learning Modules
 
 [Data Wrangling Using tidyverse in R](TidyverseTest.html)
 
