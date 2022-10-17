@@ -55,7 +55,7 @@ The structure of a ggplot graphic also gives us a nice workflow for building one
     - you can set aesthetics within the ```ggplot()``` function to have them apply to all subsequent layers, or you can set them within each individual ```geom_``` function you use to create the objects representing the data.
   3. Define the geometric objects you'd like to represent your data using the various ```geom_``` functions. These are added _after_ we define the data and any global aesthetic mapping in the ```gplot()``` function. We simply add them to the end of our ggplot workflow with a ```+```. Some example geoms are:
   
-  - ```geom_points()```: represents the data with points (requires at least x, y coordinates)
+  - ```geom_point()```: represents the data with points (requires at least x, y coordinates)
   - ```geom_boxplot()```: represents the data with boxplots (requires at least one variable x)
   - ```geom_violin()```: represents the data with violin plots (requires at least one variable x)
   - ```geom_histogram()```: represents the frequency of different values of variables (requires at least one variable x)
@@ -356,7 +356,7 @@ ggplot(penguins_df, aes(x = flipper_length_mm, y = body_mass_g, shape = sex, col
 
 Great, now we have points grouped by sex and species, but one trend line to rule them all.
 
-This is probably a bad idea though. Can we split the trendlines back up by sex and species, but present them neater? We need ```facet_wrap()```!
+This is probably a bad idea though. Can we split the trendlines up by sex and species again, but present them neater? We need ```facet_wrap()```!
 
 ## Facetting
 
